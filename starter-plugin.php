@@ -65,6 +65,7 @@ final class Starter_Plugin {
 	 */
 	public $version;
 
+	// Admin - Start
 	/**
 	 * The admin object.
 	 * @var     object
@@ -80,7 +81,7 @@ final class Starter_Plugin {
 	 * @since   1.0.0
 	 */
 	public $settings;
-
+	// Admin - End
 	/**
 	 * Constructor function.
 	 * @access  public
@@ -93,6 +94,7 @@ final class Starter_Plugin {
 		$this->plugin_path 		= plugin_dir_path( __FILE__ );
 		$this->version 			= '1.0.0';
 
+		// Admin - Start
 		require_once( 'classes/class-starter-plugin-settings.php' );
 			$this->settings = new Starter_Plugin_Settings();
 
@@ -100,6 +102,7 @@ final class Starter_Plugin {
 			require_once( 'classes/class-starter-plugin-admin.php' );
 			$this->admin = new Starter_Plugin_Admin();
 		}
+		// Admin - End
 
 		register_activation_hook( __FILE__, array( $this, 'install' ) );
 
@@ -168,7 +171,7 @@ final class Starter_Plugin {
 	 */
 	private function _log_version_number () {
 		// Log the version number.
-		update_option( $this->_token . '_version', $this->version );
+		update_option( $this->_token . '-version', $this->version );
 	} // End _log_version_number()
 } // End Class
 ?>
