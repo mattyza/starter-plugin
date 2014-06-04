@@ -28,8 +28,91 @@ final class Starter_Plugin_Settings {
 	 * @return  array        Validated data.
 	 */
 	public function validate_settings ( $input ) {
+		if ( is_array( $input ) && 0 < count( $input ) ) {
+			$fields = $this->get_settings_fields();
+
+			foreach ( $input as $k => $v ) {
+				if ( ! isset( $fields[$k] ) ) {
+					continue;
+				}
+
+				// Determine if a method is available for validating this field.
+				$method = 'validate_field_' . $fields[$k]['type'];
+				if ( ! method_exists( $this, $method ) ) {
+					if ( true == (bool)apply_filters( 'starter-plugin-validate-field-' . $fields[$k]['type'] . '_use_default', true ) ) {
+						$method = 'validate_field_text';
+					} else {
+						$method = '';
+					}
+				}
+
+				// If we have an internal method for validation, filter and apply it.
+				if ( '' != $method ) {
+					add_filter( 'starter-plugin-validate-field-' . $fields[$k]['type'], array( $this, $method ) );
+				}
+
+				$method_output = apply_filters( 'starter-plugin-validate-field-' . $fields[$k]['type'], $v, $fields[$k] );
+				if ( is_wp_error( $method_output ) ) {
+					// if ( defined( 'WP_DEBUG' ) || true == constant( 'WP_DEBUG' ) ) print_r( $method_output ); // Add better error display.
+				} else {
+					$input[$k] = $method_output;
+				}
+			}
+		}
 		return $input;
 	} // End validate_settings()
+
+	/**
+	 * Validate the given data, assuming it is from a text input field.
+	 * @access  public
+	 * @since   6.0.0
+	 * @return  void
+	 */
+	public function validate_field_text ( $v ) {
+		return (string)wp_kses_post( $v );
+	} // End validate_field_text()
+
+	/**
+	 * Validate the given data, assuming it is from a textarea field.
+	 * @access  public
+	 * @since   6.0.0
+	 * @return  void
+	 */
+	public function validate_field_textarea ( $v ) {
+		// Allow iframe, object and embed tags in textarea fields.
+		$allowed = wp_kses_allowed_html( 'post' );
+		$allowed['iframe'] = array( 'src' => true, 'width' => true, 'height' => true, 'id' => true, 'class' => true, 'name' => true );
+		$allowed['object'] = array( 'src' => true, 'width' => true, 'height' => true, 'id' => true, 'class' => true, 'name' => true );
+		$allowed['embed'] = array( 'src' => true, 'width' => true, 'height' => true, 'id' => true, 'class' => true, 'name' => true );
+
+		return wp_kses( $v, $allowed );
+	} // End validate_field_textarea()
+
+	/**
+	 * Validate the given data, assuming it is from a checkbox input field.
+	 * @access public
+	 * @since  6.0.0
+	 * @param  string $v
+	 * @return string
+	 */
+	public function validate_field_checkbox ( $v ) {
+		if ( 'true' != $v ) {
+			return 'false';
+		} else {
+			return 'true';
+		}
+	} // End validate_field_checkbox()
+
+	/**
+	 * Validate the given data, assuming it is from a URL field.
+	 * @access public
+	 * @since  6.0.0
+	 * @param  string $v
+	 * @return string
+	 */
+	public function validate_field_url ( $v ) {
+		return trim( esc_url( $v ) );
+	} // End validate_field_url()
 
 	/**
 	 * Render a field of a given type.
