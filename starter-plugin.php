@@ -103,7 +103,6 @@ final class Starter_Plugin {
 			$this->admin = new Starter_Plugin_Admin();
 		}
 		// Admin - End
-
 		register_activation_hook( __FILE__, array( $this, 'install' ) );
 
 		add_action( 'init', array( $this, 'load_plugin_textdomain' ) );
