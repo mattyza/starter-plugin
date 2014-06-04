@@ -87,7 +87,9 @@ final class Starter_Plugin_Admin {
 
 		if ( 0 < count( $fields ) ) {
 			foreach ( $fields as $k => $v ) {
-				add_settings_field( $k, $v['name'], array( Starter_Plugin()->settings, 'render_field' ), 'starter-plugin', $v['section'], $v );
+				$args = $v;
+				$args['id'] = $k;
+				add_settings_field( $k, $v['name'], array( Starter_Plugin()->settings, 'render_field' ), 'starter-plugin', $v['section'], $args );
 			}
 		}
 	} // End render_settings()
@@ -100,7 +102,7 @@ final class Starter_Plugin_Admin {
 	 * @return  array        Validated data.
 	 */
 	public function validate_settings ( $input ) {
-		return $input;
+		return Starter_Plugin()->settings->validate_settings( $input );
 	} // End validate_settings()
 } // End Class
 ?>
