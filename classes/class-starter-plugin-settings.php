@@ -209,13 +209,13 @@ final class Starter_Plugin_Settings {
 	protected function render_field_checkbox ( $key, $args ) {
 		$has_description = false;
 		$html = '';
-		if ( isset( $args['desc'] ) ) {
+		if ( isset( $args['description'] ) ) {
 			$has_description = true;
 			$html .= '<label for="' . esc_attr( $key ) . '">' . "\n";
 		}
 		$html .= '<input id="' . esc_attr( $key ) . '" name="' . esc_attr( $key ) . '" type="checkbox" value="true"' . checked( esc_attr( $this->get_value( $args['id'], $args['default'] ) ), 'true', false ) . ' />' . "\n";
 		if ( $has_description ) {
-			$html .= wp_kses_post( $args['desc'] ) . '</label>' . "\n";
+			$html .= wp_kses_post( $args['description'] ) . '</label>' . "\n";
 		}
 		return $html;
 	} // End render_field_checkbox()
