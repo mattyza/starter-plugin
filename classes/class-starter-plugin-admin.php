@@ -18,6 +18,9 @@ final class Starter_Plugin_Admin {
 	 * @return  void
 	 */
 	public function __construct ( $file ) {
+		// Register the settings with WordPress.
+		add_action( 'admin_init', array( $this, 'register_settings' ) );
+		// Register the settings screen within WordPress.
 		add_action( 'admin_menu', array( $this, 'register_settings_screen' ) );
 	} // End __construct()
 
@@ -42,8 +45,51 @@ final class Starter_Plugin_Admin {
 ?>
 		<div class="wrap starter-plugin-wrap">
 			<h2><?php echo $title; ?></h2>
+			<form action="options.php" method="post">
+				<?php
+					settings_fields( 'starter-plugin-settings' );
+					do_settings_sections( 'starter-plugin' );
+					submit_button( __( 'Save Changes', 'starter-plugin' ) );
+				?>
+			</form>
 		</div><!--/.wrap-->
 <?php
 	} // End settings_screen()
+
+	/**
+	 * Register the settings within the Settings API.
+	 * @access  public
+	 * @since   1.0.0
+	 * @return  void
+	 */
+	public function register_settings () {
+		// Register the setting we'll use to store our information.
+		register_setting( 'starter-plugin-settings', 'starter-plugin', array( $this, 'validate_settings' ) );
+
+		// Register settings sections.
+		add_settings_section( 'our-first-example-section', __( 'Our First Example Section', 'starter-plugin' ), array( $this, 'render_settings' ), 'starter-plugin' );
+		add_settings_section( 'our-second-example-section', __( 'Our Second Example Section', 'starter-plugin' ), array( $this, 'render_settings' ), 'starter-plugin' );
+	} // End register_settings()
+
+	/**
+	 * Render the settings.
+	 * @access  public
+	 * @since   1.0.0
+	 * @return  void
+	 */
+	public function render_settings ( $args ) {
+
+	} // End render_settings()
+
+	/**
+	 * Validate the settings.
+	 * @access  public
+	 * @since   1.0.0
+	 * @param   array $input Inputted data.
+	 * @return  array        Validated data.
+	 */
+	public function validate_settings ( $input ) {
+		return $input;
+	} // End validate_settings()
 } // End Class
 ?>
