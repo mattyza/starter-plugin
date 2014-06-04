@@ -17,7 +17,7 @@ final class Starter_Plugin_Admin {
 	 * @since   1.0.0
 	 * @return  void
 	 */
-	public function __construct ( $file ) {
+	public function __construct () {
 		// Register the settings with WordPress.
 		add_action( 'admin_init', array( $this, 'register_settings' ) );
 		// Register the settings screen within WordPress.
@@ -67,8 +67,13 @@ final class Starter_Plugin_Admin {
 		register_setting( 'starter-plugin-settings', 'starter-plugin', array( $this, 'validate_settings' ) );
 
 		// Register settings sections.
-		add_settings_section( 'our-first-example-section', __( 'Our First Example Section', 'starter-plugin' ), array( $this, 'render_settings' ), 'starter-plugin' );
-		add_settings_section( 'our-second-example-section', __( 'Our Second Example Section', 'starter-plugin' ), array( $this, 'render_settings' ), 'starter-plugin' );
+		$sections = Starter_Plugin()->settings->get_settings_sections();
+
+		if ( 0 < count( $sections ) ) {
+			foreach ( $sections as $k => $v ) {
+				add_settings_section( $k, $v, array( $this, 'render_settings' ), 'starter-plugin' );
+			}
+		}
 	} // End register_settings()
 
 	/**
@@ -78,7 +83,13 @@ final class Starter_Plugin_Admin {
 	 * @return  void
 	 */
 	public function render_settings ( $args ) {
+		$fields = Starter_Plugin()->settings->get_settings_fields();
 
+		if ( 0 < count( $fields ) ) {
+			foreach ( $fields as $k => $v ) {
+				add_settings_field( $k, $v['name'], array( Starter_Plugin()->settings, 'render_field' ), 'starter-plugin', $v['section'], $v );
+			}
+		}
 	} // End render_settings()
 
 	/**

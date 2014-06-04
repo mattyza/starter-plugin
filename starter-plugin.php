@@ -74,6 +74,14 @@ final class Starter_Plugin {
 	public $admin;
 
 	/**
+	 * The settings object.
+	 * @var     object
+	 * @access  public
+	 * @since   1.0.0
+	 */
+	public $settings;
+
+	/**
 	 * Constructor function.
 	 * @access  public
 	 * @since   1.0.0
@@ -85,9 +93,12 @@ final class Starter_Plugin {
 		$this->plugin_path 		= plugin_dir_path( __FILE__ );
 		$this->version 			= '1.0.0';
 
+		require_once( 'classes/class-starter-plugin-settings.php' );
+			$this->settings = new Starter_Plugin_Settings();
+
 		if ( is_admin() ) {
 			require_once( 'classes/class-starter-plugin-admin.php' );
-			$this->admin = new Starter_Plugin_Admin( __FILE__ );
+			$this->admin = new Starter_Plugin_Admin();
 		}
 
 		register_activation_hook( __FILE__, array( $this, 'install' ) );
