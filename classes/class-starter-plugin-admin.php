@@ -43,14 +43,14 @@ final class Starter_Plugin_Admin {
 	 */
 	public function settings_screen () {
 		global $title;
-		$sections = Starter_Plugin()->settings->get_settings_sections( 'all' );
+		$sections = Starter_Plugin()->settings->get_settings_sections();
 		if ( isset ( $_GET['tab'] ) ) {
 			$tab = $_GET['tab'];
 		} else {
 			list( $first_section ) = array_keys( $sections );
 			$tab = $first_section;
 		} // End If Statement
-   		?>
+		?>
 		<div class="wrap starter-plugin-wrap">
 			<h2 class="starter-plugin-title"><?php echo $title; ?></h2>
 			<h2 class="nav-tab-wrapper">
@@ -85,27 +85,11 @@ final class Starter_Plugin_Admin {
 	 */
 	public function register_settings () {
 
-		// Contact Details Settings
-		register_setting( 'starter-plugin-settings-general-fields', 'starter-plugin-general-fields', array( $this, 'validate_contact_settings' ) );
-
-		// Register settings sections.
-		$sections = Starter_Plugin()->settings->get_settings_sections( 'general-fields' );
-
+		$sections = Starter_Plugin()->settings->get_settings_sections();
 		if ( 0 < count( $sections ) ) {
 			foreach ( $sections as $k => $v ) {
-				add_settings_section( $k, $v, array( $this, 'render_settings' ), 'starter-plugin-general-fields', 'general-fields', 'general-fields' );
-			} // End For Loop
-		} // End If Statement
-
-		// Map Details Settings
-		register_setting( 'starter-plugin-settings-example-fields', 'starter-plugin-example-fields', array( $this, 'validate_map_settings' ) );
-
-		// Register settings sections.
-		$sections = Starter_Plugin()->settings->get_settings_sections( 'example-fields' );
-
-		if ( 0 < count( $sections ) ) {
-			foreach ( $sections as $k => $v ) {
-				add_settings_section( $k, $v, array( $this, 'render_settings' ), 'starter-plugin-example-fields', 'example-fields', 'example-fields' );
+				register_setting( 'starter-plugin-settings-' . $k, 'starter-plugin-' . $k, array( $this, 'validate_settings' ) );
+				add_settings_section( $k, $v, array( $this, 'render_settings' ), 'starter-plugin-' . $k, $k, $k );
 			} // End For Loop
 		} // End If Statement
 
@@ -139,18 +123,15 @@ final class Starter_Plugin_Admin {
 	 * @param   array $input Inputted data.
 	 * @return  array        Validated data.
 	 */
-	public function validate_contact_settings ( $input ) {
-		return Starter_Plugin()->settings->validate_settings( $input, 'contact-fields' );
-	} // End validate_contact_settings()
+	public function validate_settings ( $input ) {
+		if ( isset ( $_GET['tab'] ) ) {
+			$tab = $_GET['tab'];
+		} else {
+			$sections = Starter_Plugin()->settings->get_settings_sections();
+			list( $first_section ) = array_keys( $sections );
+			$tab = $first_section;
+		} // End If Statement
+		return Starter_Plugin()->settings->validate_settings( $input, $tab );
+	} // End validate_settings()
 
-	/**
-	 * Validate the settings.
-	 * @access  public
-	 * @since   1.0.0
-	 * @param   array $input Inputted data.
-	 * @return  array        Validated data.
-	 */
-	public function validate_map_settings ( $input ) {
-		return Starter_Plugin()->settings->validate_settings( $input, 'example-fields' );
-	} // End validate_map_settings()
 } // End Class

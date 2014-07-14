@@ -187,28 +187,14 @@ final class Starter_Plugin_Settings {
 	/**
 	 * Retrieve the settings fields details
 	 * @access  public
-	 * @param  string $section field section.
 	 * @since   1.0.0
 	 * @return  array        Settings fields.
 	 */
-	public function get_settings_sections ( $section ) {
+	public function get_settings_sections () {
 		$settings_sections = array();
 
-		// Declare the default settings fields.
-		switch ( $section ) {
-			case 'general-fields':
-				$settings_sections['general-fields'] = __( 'Starter Plugin', 'starter-plugin' );
-				break;
-			case 'example-fields':
-				$settings_sections['example-fields'] = __( 'Example Fields', 'starter-plugin' );
-				break;
-			case 'all':
-				$settings_sections['general-fields'] = __( 'Starter Plugin', 'starter-plugin' );
-				$settings_sections['example-fields'] = __( 'Example Fields', 'starter-plugin' );
-			default:
-				# code...
-				break;
-		}
+		$settings_sections['general-fields'] = __( 'Starter Plugin', 'starter-plugin' );
+		$settings_sections['example-fields'] = __( 'Example Fields', 'starter-plugin' );
 
 		return (array)apply_filters( 'starter-plugin-settings-sections', $settings_sections );
 	} // End get_settings_sections()
