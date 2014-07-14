@@ -145,56 +145,7 @@ final class Starter_Plugin_Settings {
 	 * @param   array $args The field parameters.
 	 * @return  void
 	 */
-	public function render_contact_field ( $args ) {
-		$html = '';
-
-		if ( ! in_array( $args['type'], $this->get_supported_fields() ) ) return ''; // Supported field type sanity check.
-
-		// Make sure we have some kind of default, if the key isn't set.
-		if ( ! isset( $args['default'] ) ) {
-			$args['default'] = '';
-		}
-
-		$method = 'render_field_' . $args['type'];
-
-		if ( ! method_exists( $this, $method ) ) {
-			$method = 'render_field_text';
-		}
-
-		// Construct the key.
-		$key 			= Starter_Plugin()->token . '-' . $args['section'] . '[' . $args['id'] . ']';
-		$method_output 	= $this->$method( $key, $args );
-
-		if ( is_wp_error( $method_output ) ) {
-			// if ( defined( 'WP_DEBUG' ) || true == constant( 'WP_DEBUG' ) ) print_r( $method_output ); // Add better error display.
-		} else {
-			$html .= $method_output;
-		}
-
-		// Output the description, if the current field allows it.
-		if ( isset( $args['type'] ) && ! in_array( $args['type'], (array)apply_filters( 'wf_no_description_fields', array( 'checkbox' ) ) ) ) {
-			if ( isset( $args['description'] ) ) {
-				$description = '<p class="description">' . wp_kses_post( $args['description'] ) . '</p>' . "\n";
-
-				if ( in_array( $args['type'], (array)apply_filters( 'wf_newline_description_fields', array( 'textarea', 'select' ) ) ) ) {
-					$description = wpautop( $description );
-				}
-
-				$html .= $description;
-			}
-		}
-
-		echo $html;
-	} // End render_contact_field()
-
-	/**
-	 * Render a field of a given type.
-	 * @access  public
-	 * @since   1.0.0
-	 * @param   array $args The field parameters.
-	 * @return  void
-	 */
-	public function render_map_field ( $args ) {
+	public function render_field ( $args ) {
 		$html = '';
 		if ( ! in_array( $args['type'], $this->get_supported_fields() ) ) return ''; // Supported field type sanity check.
 
@@ -231,7 +182,7 @@ final class Starter_Plugin_Settings {
 		}
 
 		echo $html;
-	} // End render_map_field()
+	} // End render_field()
 
 	/**
 	 * Retrieve the settings fields details

@@ -93,7 +93,7 @@ final class Starter_Plugin_Admin {
 
 		if ( 0 < count( $sections ) ) {
 			foreach ( $sections as $k => $v ) {
-				add_settings_section( $k, $v, array( $this, 'render_contact_settings' ), 'starter-plugin-general-fields' );
+				add_settings_section( $k, $v, array( $this, 'render_settings' ), 'starter-plugin-general-fields', 'general-fields', 'general-fields' );
 			} // End For Loop
 		} // End If Statement
 
@@ -105,7 +105,7 @@ final class Starter_Plugin_Admin {
 
 		if ( 0 < count( $sections ) ) {
 			foreach ( $sections as $k => $v ) {
-				add_settings_section( $k, $v, array( $this, 'render_map_settings' ), 'starter-plugin-example-fields' );
+				add_settings_section( $k, $v, array( $this, 'render_settings' ), 'starter-plugin-example-fields', 'example-fields', 'example-fields' );
 			} // End For Loop
 		} // End If Statement
 
@@ -118,34 +118,16 @@ final class Starter_Plugin_Admin {
 	 * @since   1.0.0
 	 * @return  void
 	 */
-	public function render_contact_settings ( $args ) {
-		$fields = Starter_Plugin()->settings->get_settings_fields( 'general-fields' );
+	public function render_settings ( $args ) {
+		$token = $args['id'];
+		$fields = Starter_Plugin()->settings->get_settings_fields( $token );
 
 		if ( 0 < count( $fields ) ) {
 			foreach ( $fields as $k => $v ) {
 				$args 		= $v;
 				$args['id'] = $k;
 
-				add_settings_field( $k, $v['name'], array( Starter_Plugin()->settings, 'render_contact_field' ), 'starter-plugin-general-fields', $v['section'], $args );
-			} // End For Loop
-		} // End If Statement
-	} // End render_contact_settings()
-
-	/**
-	 * Render the settings.
-	 * @access  public
-	 * @param  array $args arguments.
-	 * @since   1.0.0
-	 * @return  void
-	 */
-	public function render_map_settings ( $args ) {
-		$fields = Starter_Plugin()->settings->get_settings_fields( 'example-fields' );
-
-		if ( 0 < count( $fields ) ) {
-			foreach ( $fields as $k => $v ) {
-				$args = $v;
-				$args['id'] = $k;
-				add_settings_field( $k, $v['name'], array( Starter_Plugin()->settings, 'render_map_field' ), 'starter-plugin-example-fields', $v['section'], $args );
+				add_settings_field( $k, $v['name'], array( Starter_Plugin()->settings, 'render_field' ), 'starter-plugin-' . $token , $v['section'], $args );
 			} // End For Loop
 		} // End If Statement
 	} // End render_settings()
