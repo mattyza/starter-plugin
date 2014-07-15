@@ -195,6 +195,9 @@ final class Starter_Plugin_Settings {
 
 		$settings_sections['general-fields'] = __( 'Starter Plugin', 'starter-plugin' );
 		$settings_sections['example-fields'] = __( 'Example Fields', 'starter-plugin' );
+		// Add your new sections below here. 
+		// Admin tabs will be created for each section.
+		// Don't forget to add fields for the section in the get_settings_fields() function below
 
 		return (array)apply_filters( 'starter-plugin-settings-sections', $settings_sections );
 	} // End get_settings_sections()
