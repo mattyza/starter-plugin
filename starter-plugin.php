@@ -6,8 +6,8 @@
  * Version: 1.0.0
  * Author: Matty
  * Author URI: http://matty.co.za/
- * Requires at least: 3.8.1
- * Tested up to: 3.8.1
+ * Requires at least: 4.0.0
+ * Tested up to: 4.0.0
  *
  * Text Domain: starter-plugin
  * Domain Path: /languages/
