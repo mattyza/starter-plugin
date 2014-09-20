@@ -39,8 +39,7 @@ final class Starter_Plugin_Admin {
 	 *
 	 * @since 1.0.0
 	 * @static
-	 * @see Starter_Plugin()
-	 * @return Main Starter_Plugin instance
+	 * @return Main Starter_Plugin_Admin instance
 	 */
 	public static function instance () {
 		if ( is_null( self::$_instance ) )
