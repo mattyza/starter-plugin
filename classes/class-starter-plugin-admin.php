@@ -12,6 +12,14 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  */
 final class Starter_Plugin_Admin {
 	/**
+	 * Starter_Plugin_Admin The single instance of Starter_Plugin_Admin.
+	 * @var 	object
+	 * @access  private
+	 * @since 	1.0.0
+	 */
+	private static $_instance = null;
+
+	/**
 	 * Constructor function.
 	 * @access  public
 	 * @since   1.0.0
@@ -23,6 +31,22 @@ final class Starter_Plugin_Admin {
 		// Register the settings screen within WordPress.
 		add_action( 'admin_menu', array( $this, 'register_settings_screen' ) );
 	} // End __construct()
+
+	/**
+	 * Main Starter_Plugin_Admin Instance
+	 *
+	 * Ensures only one instance of Starter_Plugin_Admin is loaded or can be loaded.
+	 *
+	 * @since 1.0.0
+	 * @static
+	 * @see Starter_Plugin()
+	 * @return Main Starter_Plugin instance
+	 */
+	public static function instance () {
+		if ( is_null( self::$_instance ) )
+			self::$_instance = new self();
+		return self::$_instance;
+	} // End instance()
 
 	/**
 	 * Register the admin screen.

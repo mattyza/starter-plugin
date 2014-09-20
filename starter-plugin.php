@@ -100,7 +100,7 @@ final class Starter_Plugin {
 
 		if ( is_admin() ) {
 			require_once( 'classes/class-starter-plugin-admin.php' );
-			$this->admin = new Starter_Plugin_Admin();
+			$this->admin = Starter_Plugin_Admin::get_instance();
 		}
 		// Admin - End
 		register_activation_hook( __FILE__, array( $this, 'install' ) );
