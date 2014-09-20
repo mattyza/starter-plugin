@@ -67,12 +67,7 @@ final class Starter_Plugin_Admin {
 	public function settings_screen () {
 		global $title;
 		$sections = Starter_Plugin()->settings->get_settings_sections();
-		if ( isset ( $_GET['tab'] ) ) {
-			$tab = $_GET['tab'];
-		} else {
-			list( $first_section ) = array_keys( $sections );
-			$tab = $first_section;
-		} // End If Statement
+		$tab = $this->_get_current_tab( $sections );
 		?>
 		<div class="wrap starter-plugin-wrap">
 			<h2 class="starter-plugin-title"><?php echo $title; ?></h2>
@@ -80,12 +75,11 @@ final class Starter_Plugin_Admin {
 				<?php
 				foreach ( $sections as $key => $value ) {
 					$class = '';
-
 					if ( $tab == $key ) {
 						$class = ' nav-tab-active';
 					} // End If Statement
 
-					echo '<a href="' . admin_url( 'options-general.php?page=starter-plugin&tab=' . $key ) . '" class="nav-tab' . $class . '">' . $value . '</a>';
+					echo '<a href="' . admin_url( 'options-general.php?page=starter-plugin&tab=' . sanitize_title_with_dashes( $key ) ) . '" class="nav-tab' . esc_attr( $class ) . '">' . esc_html( $value ) . '</a>';
 				} // End For Loop
 				?>
 			</h2>
@@ -111,8 +105,8 @@ final class Starter_Plugin_Admin {
 		$sections = Starter_Plugin()->settings->get_settings_sections();
 		if ( 0 < count( $sections ) ) {
 			foreach ( $sections as $k => $v ) {
-				register_setting( 'starter-plugin-settings-' . $k, 'starter-plugin-' . $k, array( $this, 'validate_settings' ) );
-				add_settings_section( $k, $v, array( $this, 'render_settings' ), 'starter-plugin-' . $k, $k, $k );
+				register_setting( 'starter-plugin-settings-' . sanitize_title_with_dashes( $k ), 'starter-plugin-' . $k, array( $this, 'validate_settings' ) );
+				add_settings_section( sanitize_title_with_dashes( $k ), $v, array( $this, 'render_settings' ), 'starter-plugin-' . $k, $k, $k );
 			} // End For Loop
 		} // End If Statement
 
@@ -157,4 +151,25 @@ final class Starter_Plugin_Admin {
 		return Starter_Plugin()->settings->validate_settings( $input, $tab );
 	} // End validate_settings()
 
+	/**
+	 * Return the current tab key.
+	 * @access  public
+	 * @since   1.0.0
+	 * @param   array  $sections Sections to scan through for a section key.
+	 * @return  string 			 The current tab key.
+	 */
+	private function _get_current_tab ( $sections = array() ) {
+		if ( isset ( $_GET['tab'] ) ) {
+			$response = sanitize_title_with_dashes( $_GET['tab'] );
+		} else {
+			if ( is_array( $sections ) && ! empty( $sections ) ) {
+				list( $first_section ) = array_keys( $sections );
+				$response = $first_section;
+			} else {
+				$response = '';
+			}
+		}
+
+		return $response;
+	} // End _get_current_tab()
 } // End Class
