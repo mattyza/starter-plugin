@@ -96,7 +96,7 @@ final class Starter_Plugin {
 
 		// Admin - Start
 		require_once( 'classes/class-starter-plugin-settings.php' );
-			$this->settings = new Starter_Plugin_Settings();
+			$this->settings = Starter_Plugin_Settings::get_instance();
 
 		if ( is_admin() ) {
 			require_once( 'classes/class-starter-plugin-admin.php' );
