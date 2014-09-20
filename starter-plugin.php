@@ -1,11 +1,11 @@
 <?php
 /**
  * Plugin Name: Starter Plugin
- * Plugin URI: http://matty.co.za/
+ * Plugin URI: http://domain.com/starter-plugin/
  * Description: Hey there! I'm your new starter plugin.
  * Version: 1.0.0
  * Author: Matty
- * Author URI: http://matty.co.za/
+ * Author URI: http://domain.com/
  * Requires at least: 4.0.0
  * Tested up to: 4.0.0
  *
@@ -96,11 +96,11 @@ final class Starter_Plugin {
 
 		// Admin - Start
 		require_once( 'classes/class-starter-plugin-settings.php' );
-			$this->settings = new Starter_Plugin_Settings();
+			$this->settings = Starter_Plugin_Settings::instance();
 
 		if ( is_admin() ) {
 			require_once( 'classes/class-starter-plugin-admin.php' );
-			$this->admin = new Starter_Plugin_Admin();
+			$this->admin = Starter_Plugin_Admin::instance();
 		}
 		// Admin - End
 		register_activation_hook( __FILE__, array( $this, 'install' ) );

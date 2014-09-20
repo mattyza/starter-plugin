@@ -12,6 +12,29 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  */
 final class Starter_Plugin_Settings {
 	/**
+	 * Starter_Plugin_Admin The single instance of Starter_Plugin_Admin.
+	 * @var 	object
+	 * @access  private
+	 * @since 	1.0.0
+	 */
+	private static $_instance = null;
+
+	/**
+	 * Main Starter_Plugin_Settings Instance
+	 *
+	 * Ensures only one instance of Starter_Plugin_Settings is loaded or can be loaded.
+	 *
+	 * @since 1.0.0
+	 * @static
+	 * @return Main Starter_Plugin_Settings instance
+	 */
+	public static function instance () {
+		if ( is_null( self::$_instance ) )
+			self::$_instance = new self();
+		return self::$_instance;
+	} // End instance()
+
+	/**
 	 * Constructor function.
 	 * @access  public
 	 * @since   1.0.0
