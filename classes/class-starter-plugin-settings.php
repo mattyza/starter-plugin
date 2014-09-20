@@ -216,8 +216,8 @@ final class Starter_Plugin_Settings {
 	public function get_settings_sections () {
 		$settings_sections = array();
 
-		$settings_sections['general-fields'] = __( 'Starter Plugin', 'starter-plugin' );
-		$settings_sections['example-fields'] = __( 'Example Fields', 'starter-plugin' );
+		$settings_sections['standard-fields'] = __( 'Standard Fields', 'starter-plugin' );
+		$settings_sections['special-fields'] = __( 'Special Fields', 'starter-plugin' );
 		// Add your new sections below here.
 		// Admin tabs will be created for each section.
 		// Don't forget to add fields for the section in the get_settings_fields() function below
@@ -237,51 +237,34 @@ final class Starter_Plugin_Settings {
 		// Declare the default settings fields.
 
 		switch ( $section ) {
-			case 'general-fields':
+			case 'standard-fields':
 
-				$settings_fields['plugin_name'] = array(
-												'name' => __( 'Plugin Name', 'starter-plugin' ),
-												'type' => 'text',
-												'default' => '',
-												'section' => 'general-fields',
-												'description' => __( 'Place the plugin name here.', 'starter-plugin' )
-											);
-				$settings_fields['plugin_description'] = array(
-												'name' => __( 'Plugin description', 'starter-plugin' ),
-												'type' => 'textarea',
-												'default' => '',
-												'section' => 'general-fields',
-												'description' => __( 'Place the plugin description text here.', 'starter-plugin' )
-											);
-
-				break;
-			case 'example-fields':
 				$settings_fields['text'] = array(
 												'name' => __( 'Example Text Input', 'starter-plugin' ),
 												'type' => 'text',
 												'default' => '',
-												'section' => 'example-fields',
+												'section' => 'standard-fields',
 												'description' => __( 'Place the field description text here.', 'starter-plugin' )
 											);
 				$settings_fields['textarea'] = array(
 												'name' => __( 'Example Textarea', 'starter-plugin' ),
 												'type' => 'textarea',
 												'default' => '',
-												'section' => 'example-fields',
+												'section' => 'standard-fields',
 												'description' => __( 'Place the field description text here.', 'starter-plugin' )
 											);
 				$settings_fields['checkbox'] = array(
 												'name' => __( 'Example Checkbox', 'starter-plugin' ),
 												'type' => 'checkbox',
 												'default' => '',
-												'section' => 'example-fields',
+												'section' => 'standard-fields',
 												'description' => __( 'Place the field description text here.', 'starter-plugin' )
 											);
 				$settings_fields['radio'] = array(
 												'name' => __( 'Example Radio Buttons', 'starter-plugin' ),
 												'type' => 'radio',
 												'default' => '',
-												'section' => 'example-fields',
+												'section' => 'standard-fields',
 												'options' => array(
 																	'one' => __( 'One', 'starter-plugin' ),
 																	'two' => __( 'Two', 'starter-plugin' ),
@@ -293,7 +276,7 @@ final class Starter_Plugin_Settings {
 													'name' => __( 'Example Select', 'starter-plugin' ),
 													'type' => 'select',
 													'default' => '',
-													'section' => 'example-fields',
+													'section' => 'standard-fields',
 													'options' => array(
 																	'one' => __( 'One', 'starter-plugin' ),
 																	'two' => __( 'Two', 'starter-plugin' ),
@@ -302,11 +285,14 @@ final class Starter_Plugin_Settings {
 													'description' => __( 'Place the field description text here.', 'starter-plugin' )
 											);
 
+				break;
+			case 'special-fields':
+
 				$settings_fields['select_taxonomy'] = array(
 													'name' => __( 'Example Taxonomy Selector', 'starter-plugin' ),
 													'type' => 'select_taxonomy',
 													'default' => '',
-													'section' => 'example-fields',
+													'section' => 'special-fields',
 													'description' => __( 'Place the field description text here.', 'starter-plugin' )
 											);
 
