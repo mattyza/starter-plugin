@@ -96,11 +96,11 @@ final class Starter_Plugin {
 
 		// Admin - Start
 		require_once( 'classes/class-starter-plugin-settings.php' );
-			$this->settings = Starter_Plugin_Settings::get_instance();
+			$this->settings = Starter_Plugin_Settings::instance();
 
 		if ( is_admin() ) {
 			require_once( 'classes/class-starter-plugin-admin.php' );
-			$this->admin = Starter_Plugin_Admin::get_instance();
+			$this->admin = Starter_Plugin_Admin::instance();
 		}
 		// Admin - End
 		register_activation_hook( __FILE__, array( $this, 'install' ) );
