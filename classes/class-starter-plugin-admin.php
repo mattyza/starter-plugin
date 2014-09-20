@@ -131,13 +131,8 @@ final class Starter_Plugin_Admin {
 	 * @return  array        Validated data.
 	 */
 	public function validate_settings ( $input ) {
-		if ( isset ( $_GET['tab'] ) ) {
-			$tab = $_GET['tab'];
-		} else {
-			$sections = Starter_Plugin()->settings->get_settings_sections();
-			list( $first_section ) = array_keys( $sections );
-			$tab = $first_section;
-		} // End If Statement
+		$sections = Starter_Plugin()->settings->get_settings_sections();
+		$tab = $this->_get_current_tab( $sections );
 		return Starter_Plugin()->settings->validate_settings( $input, $tab );
 	} // End validate_settings()
 
