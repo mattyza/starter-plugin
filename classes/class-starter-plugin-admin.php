@@ -216,6 +216,6 @@ final class Starter_Plugin_Admin {
 			}
 		}
 
-		return (array)apply_filters( 'starter_plugin_get_admin_header_data', $response );
+		return (array)apply_filters( 'starter-plugin-get-admin-header-data', $response );
 	} // End _get_admin_header_data()
 } // End Class
