@@ -492,4 +492,46 @@ final class Starter_Plugin_Settings {
 
 		return $response;
 	} // End get_value()
+
+	/**
+	 * Return all settings keys.
+	 * @access  public
+	 * @param  string $section field section.
+	 * @since   1.0.0
+	 * @return  mixed Returned value.
+	 */
+	public function get_settings ( $section = '' ) {
+		$response = false;
+
+		$sections = array_keys( (array)$this->get_settings_sections() );
+
+		if ( in_array( $section, $sections ) ) {
+			$sections = array( $section );
+		}
+
+		if ( 0 < count( $sections ) ) {
+			foreach ( $sections as $k => $v ) {
+				$fields = $this->get_settings_fields( $v );
+				$values = get_option( 'starter-plugin-' . $v, array() );
+
+				if ( is_array( $fields ) && 0 < count( $fields ) ) {
+					foreach ( $fields as $i => $j ) {
+						// If we have a value stored, use it.
+						if ( isset( $values[$i] ) ) {
+							$response[$i] = $values[$i];
+						} else {
+							// Otherwise, check for a default value. If we have one, use it. Otherwise, return an empty string.
+							if ( isset( $fields[$i]['default'] ) ) {
+								$response[$i] = $fields[$i]['default'];
+							} else {
+								$response[$i] = '';
+							}
+						}
+					}
+				}
+			}
+		}
+
+		return $response;
+	} // End get_settings()
 } // End Class

@@ -92,6 +92,7 @@ final class Starter_Plugin_Admin {
 	 */
 	public function register_settings () {
 		$sections = Starter_Plugin()->settings->get_settings_sections();
+		$tab = $this->_get_current_tab( $sections );
 		if ( 0 < count( $sections ) ) {
 			foreach ( $sections as $k => $v ) {
 				register_setting( 'starter-plugin-settings-' . sanitize_title_with_dashes( $k ), 'starter-plugin-' . $k, array( $this, 'validate_settings' ) );
