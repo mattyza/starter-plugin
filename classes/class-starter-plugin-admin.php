@@ -20,6 +20,14 @@ final class Starter_Plugin_Admin {
 	private static $_instance = null;
 
 	/**
+	 * The string containing the dynamically generated hook token.
+	 * @var     string
+	 * @access  private
+	 * @since   1.0.0
+	 */
+	private $_hook;
+
+	/**
 	 * Constructor function.
 	 * @access  public
 	 * @since   1.0.0
