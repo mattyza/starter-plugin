@@ -65,6 +65,22 @@ final class Starter_Plugin {
 	 */
 	public $version;
 
+	/**
+	 * The plugin directory URL.
+	 * @var     string
+	 * @access  public
+	 * @since   1.0.0
+	 */
+	public $plugin_url;
+
+	/**
+	 * The plugin directory path.
+	 * @var     string
+	 * @access  public
+	 * @since   1.0.0
+	 */
+	public $plugin_path;
+
 	// Admin - Start
 	/**
 	 * The admin object.
