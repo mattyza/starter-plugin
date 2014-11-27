@@ -488,8 +488,6 @@ final class Starter_Plugin_Settings {
 	 * @return  mixed Returned value.
 	 */
 	public function get_value ( $key, $default, $section ) {
-		$response = false;
-
 		$values = get_option( 'starter-plugin-' . $section, array() );
 
 		if ( is_array( $values ) && isset( $values[$key] ) ) {
