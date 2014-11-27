@@ -151,8 +151,6 @@ final class Starter_Plugin_Admin {
 	 * @return  string 			 The current tab key.
 	 */
 	public function get_admin_header_html ( $sections, $title ) {
-		$response = '';
-
 		$defaults = array(
 							'tag' => 'h2',
 							'atts' => array( 'class' => 'starter-plugin-wrapper' ),
