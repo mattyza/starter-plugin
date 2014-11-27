@@ -20,6 +20,14 @@ final class Starter_Plugin_Settings {
 	private static $_instance = null;
 
 	/**
+	 * Whether or not a 'select' field is present.
+	 * @var     boolean
+	 * @access  private
+	 * @since   1.0.0
+	 */
+	private $_has_select;
+
+	/**
 	 * Main Starter_Plugin_Settings Instance
 	 *
 	 * Ensures only one instance of Starter_Plugin_Settings is loaded or can be loaded.
