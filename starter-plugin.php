@@ -98,6 +98,16 @@ final class Starter_Plugin {
 	 */
 	public $settings;
 	// Admin - End
+
+	// Post Types - Start
+	/**
+	 * The post types we're registering.
+	 * @var     array
+	 * @access  public
+	 * @since   1.0.0
+	 */
+	public $post_types = array();
+	// Post Types - End
 	/**
 	 * Constructor function.
 	 * @access  public
@@ -119,6 +129,14 @@ final class Starter_Plugin {
 			$this->admin = Starter_Plugin_Admin::instance();
 		}
 		// Admin - End
+
+		// Post Types - Start
+		require_once( 'classes/class-starter-plugin-post-type.php' );
+		require_once( 'classes/class-starter-plugin-taxonomy.php' );
+
+		// Register an example post type. To register other post types, duplicate this line.
+		$this->post_types['thing'] = new Starter_Plugin_Post_Type( 'thing', __( 'Thing', 'starter-plugin' ), __( 'Things', 'starter-plugin' ), array( 'menu_icon' => 'dashicons-carrot' ) );
+		// Post Types - End
 		register_activation_hook( __FILE__, array( $this, 'install' ) );
 
 		add_action( 'init', array( $this, 'load_plugin_textdomain' ) );
