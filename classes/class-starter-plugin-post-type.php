@@ -142,8 +142,8 @@ class Starter_Plugin_Post_Type {
 	 * @return void
 	 */
 	public function register_taxonomy () {
-		$this->taxonomies['category'] = new Starter_Plugin_Taxonomy(); // Leave arguments empty, to use the default arguments.
-		$this->taxonomies['category']->register();
+		$this->taxonomies['thing-category'] = new Starter_Plugin_Taxonomy(); // Leave arguments empty, to use the default arguments.
+		$this->taxonomies['thing-category']->register();
 	} // End register_taxonomy()
 
 	/**
