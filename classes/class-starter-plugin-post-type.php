@@ -108,7 +108,7 @@ class Starter_Plugin_Post_Type {
 			'not_found' => sprintf( __( 'No %s Found', 'starter-plugin' ), $this->plural ),
 			'not_found_in_trash' => sprintf( __( 'No %s Found In Trash', 'starter-plugin' ), $this->plural ),
 			'parent_item_colon' => '',
-			'menu_name' => $this->plural;
+			'menu_name' => $this->plural,
 		);
 
 		$single_slug = apply_filters( 'starter_plugin_single_slug', _x( sanitize_title_with_dashes( $this->singular ), 'single post url slug', 'starter-plugin' ) );
