@@ -111,8 +111,8 @@ class Starter_Plugin_Post_Type {
 			'menu_name' => $this->plural,
 		);
 
-		$single_slug = apply_filters( 'starter_plugin_single_slug', _x( sanitize_title_with_dashes( $this->singular ), 'single post url slug', 'starter-plugin' ) );
-		$archive_slug = apply_filters( 'starter_plugin_archive_slug', _x( sanitize_title_with_dashes( $this->plural ), 'post archive url slug', 'starter-plugin' ) );
+		$single_slug = apply_filters( 'starter-plugin_single_slug', _x( sanitize_title_with_dashes( $this->singular ), 'single post url slug', 'starter-plugin' ) );
+		$archive_slug = apply_filters( 'starter-plugin_archive_slug', _x( sanitize_title_with_dashes( $this->plural ), 'post archive url slug', 'starter-plugin' ) );
 
 		$defaults = array(
 			'labels' => $labels,
@@ -257,7 +257,7 @@ class Starter_Plugin_Post_Type {
 
 		$html = '';
 
-		$html .= '<input type="hidden" name="starter_plugin_' . $this->post_type . '_noonce" id="starter_plugin_' . $this->post_type . '_noonce" value="' . wp_create_nonce( plugin_basename( dirname( Starter_Plugin()->plugin_path ) ) ) . '" />';
+		$html .= '<input type="hidden" name="starter-plugin_' . $this->post_type . '_noonce" id="starter-plugin_' . $this->post_type . '_noonce" value="' . wp_create_nonce( plugin_basename( dirname( Starter_Plugin()->plugin_path ) ) ) . '" />';
 
 		if ( 0 < count( $field_data ) ) {
 			$html .= '<table class="form-table">' . "\n";
@@ -293,7 +293,7 @@ class Starter_Plugin_Post_Type {
 		global $post, $messages;
 
 		// Verify
-		if ( ( get_post_type() != $this->post_type ) || ! wp_verify_nonce( $_POST['starter_plugin_' . $this->post_type . '_noonce'], plugin_basename( dirname( Starter_Plugin()->plugin_path ) ) ) ) {
+		if ( ( get_post_type() != $this->post_type ) || ! wp_verify_nonce( $_POST['starter-plugin_' . $this->post_type . '_noonce'], plugin_basename( dirname( Starter_Plugin()->plugin_path ) ) ) ) {
 			return $post_id;
 		}
 
@@ -360,7 +360,7 @@ class Starter_Plugin_Post_Type {
 		    'section' => 'info'
 		);
 
-		return apply_filters( 'starter_plugin_custom_fields_settings', $fields );
+		return apply_filters( 'starter-plugin_custom_fields_settings', $fields );
 	} // End get_custom_fields_settings()
 
 	/**
