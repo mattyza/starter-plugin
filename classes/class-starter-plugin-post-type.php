@@ -220,7 +220,7 @@ class Starter_Plugin_Post_Type {
 			4 => sprintf( __( '%s updated.', 'starter-plugin' ), $this->singular ),
 			/* translators: %s: date and time of the revision */
 			5 => isset($_GET['revision']) ? sprintf( __( '%s restored to revision from %s', 'starter-plugin' ), $this->singular, wp_post_revision_title( (int) $_GET['revision'], false ) ) : false,
-			6 => sprintf( __( '%s published. %sView feature%s', 'starter-plugin' ), $this->singular, '<a href="' . esc_url( get_permalink( $post_ID ) ) . '">', '</a>' ),
+			6 => sprintf( __( '%1$s published. %3$sView %2$s%4$s', 'starter-plugin' ), $this->singular, strtolower( $this->singular ), '<a href="' . esc_url( get_permalink( $post_ID ) ) . '">', '</a>' ),
 			7 => sprintf( __( '%s saved.', 'starter-plugin' ), $this->singular ),
 			8 => sprintf( __( '%s submitted. %sPreview %s%s', 'starter-plugin' ), $this->singular, strtolower( $this->singular ), '<a target="_blank" href="' . esc_url( add_query_arg( 'preview', 'true', get_permalink( $post_ID ) ) ) . '">', '</a>' ),
 			9 => sprintf( __( '%s scheduled for: %1$s. %2$sPreview %s%3$s', 'starter-plugin' ), $this->singular, strtolower( $this->singular ),
