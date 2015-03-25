@@ -202,10 +202,10 @@ final class Starter_Plugin_Settings {
 		}
 
 		// Output the description, if the current field allows it.
-		if ( isset( $args['type'] ) && ! in_array( $args['type'], (array)apply_filters( 'wf_no_description_fields', array( 'checkbox' ) ) ) ) {
+		if ( isset( $args['type'] ) && ! in_array( $args['type'], (array)apply_filters( 'starter-plugin-no-description-fields', array( 'checkbox' ) ) ) ) {
 			if ( isset( $args['description'] ) ) {
 				$description = '<p class="description">' . wp_kses_post( $args['description'] ) . '</p>' . "\n";
-				if ( in_array( $args['type'], (array)apply_filters( 'wf_newline_description_fields', array( 'textarea', 'select' ) ) ) ) {
+				if ( in_array( $args['type'], (array)apply_filters( 'starter-plugin-new-line-description-fields', array( 'textarea', 'select' ) ) ) ) {
 					$description = wpautop( $description );
 				}
 				$html .= $description;
