@@ -29,7 +29,7 @@ function Starter_Plugin() {
 	return Starter_Plugin::instance();
 } // End Starter_Plugin()
 
-Starter_Plugin();
+add_action( 'plugins_loaded', 'Starter_Plugin' );
 
 /**
  * Main Starter_Plugin Class
