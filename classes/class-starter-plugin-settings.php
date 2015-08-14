@@ -72,7 +72,7 @@ final class Starter_Plugin_Settings {
 				$method = 'validate_field_' . $fields[$k]['type'];
 
 				if ( ! method_exists( $this, $method ) ) {
-					if ( true == (bool)apply_filters( 'starter-plugin-validate-field-' . $fields[$k]['type'] . '_use_default', true ) ) {
+					if ( true === (bool)apply_filters( 'starter-plugin-validate-field-' . $fields[$k]['type'] . '_use_default', true ) ) {
 						$method = 'validate_field_text';
 					} else {
 						$method = '';
