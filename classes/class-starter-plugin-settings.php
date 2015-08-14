@@ -193,9 +193,7 @@ final class Starter_Plugin_Settings {
 		$key 				= Starter_Plugin()->token . '-' . $args['section'] . '[' . $args['id'] . ']';
 		$method_output 		= $this->$method( $key, $args );
 
-		if ( is_wp_error( $method_output ) ) {
-			// if ( defined( 'WP_DEBUG' ) || true == constant( 'WP_DEBUG' ) ) print_r( $method_output ); // Add better error display.
-		} else {
+		if ( ! is_wp_error( $method_output ) ) {
 			$html .= $method_output;
 		}
 
