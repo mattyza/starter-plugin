@@ -58,7 +58,6 @@ class Starter_Plugin_Post_Type {
 	 *
 	 * @access public
 	 * @since 1.0.0
-	 * @return void
 	 */
 	public function __construct( $post_type = 'thing', $singular = '', $plural = '', $args = array(), $taxonomies = array() ) {
 		$this->post_type = $post_type;

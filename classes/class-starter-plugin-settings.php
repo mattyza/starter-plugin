@@ -46,7 +46,6 @@ final class Starter_Plugin_Settings {
 	 * Constructor function.
 	 * @access  public
 	 * @since   1.0.0
-	 * @return  void
 	 */
 	public function __construct () {
 	} // End __construct()

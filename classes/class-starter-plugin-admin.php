@@ -31,7 +31,6 @@ final class Starter_Plugin_Admin {
 	 * Constructor function.
 	 * @access  public
 	 * @since   1.0.0
-	 * @return  void
 	 */
 	public function __construct () {
 		// Register the settings with WordPress.
