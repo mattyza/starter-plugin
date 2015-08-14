@@ -86,9 +86,7 @@ final class Starter_Plugin_Settings {
 
 				$method_output = apply_filters( 'starter-plugin-validate-field-' . $fields[$k]['type'], $v, $fields[$k] );
 
-				if ( is_wp_error( $method_output ) ) {
-					// if ( defined( 'WP_DEBUG' ) || true == constant( 'WP_DEBUG' ) ) print_r( $method_output ); // Add better error display.
-				} else {
+				if ( ! is_wp_error( $method_output ) ) {
 					$input[$k] = $method_output;
 				}
 			}
