@@ -154,9 +154,6 @@ class Starter_Plugin_Post_Type {
 	public function register_custom_columns ( $column_name, $id ) {
 		global $post;
 
-		// Uncomment this line to use metadata in the switches below.
-		// $meta = get_post_custom( $id );
-
 		switch ( $column_name ) {
 			case 'image':
 				echo $this->get_image( $id, 40 );
