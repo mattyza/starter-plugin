@@ -112,7 +112,6 @@ final class Starter_Plugin {
 	 * Constructor function.
 	 * @access  public
 	 * @since   1.0.0
-	 * @return  void
 	 */
 	public function __construct () {
 		$this->token 			= 'starter-plugin';
@@ -162,7 +161,6 @@ final class Starter_Plugin {
 	 * Load the localisation file.
 	 * @access  public
 	 * @since   1.0.0
-	 * @return  void
 	 */
 	public function load_plugin_textdomain() {
 		load_plugin_textdomain( 'starter-plugin', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
@@ -170,7 +168,7 @@ final class Starter_Plugin {
 
 	/**
 	 * Cloning is forbidden.
-	 *
+	 * @access public
 	 * @since 1.0.0
 	 */
 	public function __clone () {
@@ -179,7 +177,7 @@ final class Starter_Plugin {
 
 	/**
 	 * Unserializing instances of this class is forbidden.
-	 *
+	 * @access public
 	 * @since 1.0.0
 	 */
 	public function __wakeup () {
@@ -190,7 +188,6 @@ final class Starter_Plugin {
 	 * Installation. Runs on activation.
 	 * @access  public
 	 * @since   1.0.0
-	 * @return  void
 	 */
 	public function install () {
 		$this->_log_version_number();
@@ -200,11 +197,9 @@ final class Starter_Plugin {
 	 * Log the plugin version number.
 	 * @access  private
 	 * @since   1.0.0
-	 * @return  void
 	 */
 	private function _log_version_number () {
 		// Log the version number.
 		update_option( $this->token . '-version', $this->version );
 	} // End _log_version_number()
 } // End Class
-?>

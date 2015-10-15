@@ -55,7 +55,6 @@ class Starter_Plugin_Post_Type {
 
 	/**
 	 * Constructor function.
-	 *
 	 * @access public
 	 * @since 1.0.0
 	 */
@@ -89,7 +88,6 @@ class Starter_Plugin_Post_Type {
 
 	/**
 	 * Register the post type.
-	 *
 	 * @access public
 	 * @return void
 	 */
@@ -147,7 +145,6 @@ class Starter_Plugin_Post_Type {
 
 	/**
 	 * Add custom columns for the "manage" screen of this post type.
-	 *
 	 * @access public
 	 * @param string $column_name
 	 * @param int $id
@@ -172,7 +169,6 @@ class Starter_Plugin_Post_Type {
 
 	/**
 	 * Add custom column headings for the "manage" screen of this post type.
-	 *
 	 * @access public
 	 * @param array $defaults
 	 * @since  1.0.0
@@ -233,7 +229,6 @@ class Starter_Plugin_Post_Type {
 
 	/**
 	 * Setup the meta box.
-	 *
 	 * @access public
 	 * @since  1.0.0
 	 * @return void
@@ -244,7 +239,6 @@ class Starter_Plugin_Post_Type {
 
 	/**
 	 * The contents of our meta box.
-	 *
 	 * @access public
 	 * @since  1.0.0
 	 * @return void
@@ -282,11 +276,10 @@ class Starter_Plugin_Post_Type {
 
 	/**
 	 * Save meta box fields.
-	 *
 	 * @access public
 	 * @since  1.0.0
 	 * @param int $post_id
-	 * @return void
+	 * @return int $post_id
 	 */
 	public function meta_box_save ( $post_id ) {
 		global $post, $messages;
@@ -330,7 +323,6 @@ class Starter_Plugin_Post_Type {
 
 	/**
 	 * Customise the "Enter title here" text.
-	 *
 	 * @access public
 	 * @since  1.0.0
 	 * @param string $title
@@ -345,6 +337,7 @@ class Starter_Plugin_Post_Type {
 
 	/**
 	 * Get the settings for the custom fields.
+	 * @access public
 	 * @since  1.0.0
 	 * @return array
 	 */
@@ -387,8 +380,8 @@ class Starter_Plugin_Post_Type {
 
 	/**
 	 * Register image sizes.
+	 * @access public
 	 * @since  1.0.0
-	 * @return void
 	 */
 	public function register_image_sizes () {
 		if ( function_exists( 'add_image_size' ) ) {
@@ -400,7 +393,6 @@ class Starter_Plugin_Post_Type {
 	 * Run on activation.
 	 * @access public
 	 * @since 1.0.0
-	 * @return void
 	 */
 	public function activation () {
 		$this->flush_rewrite_rules();
@@ -410,7 +402,6 @@ class Starter_Plugin_Post_Type {
 	 * Flush the rewrite rules
 	 * @access public
 	 * @since 1.0.0
-	 * @return void
 	 */
 	private function flush_rewrite_rules () {
 		$this->register_post_type();
@@ -419,8 +410,8 @@ class Starter_Plugin_Post_Type {
 
 	/**
 	 * Ensure that "post-thumbnails" support is available for those themes that don't register it.
+	 * @access public
 	 * @since  1.0.0
-	 * @return  void
 	 */
 	public function ensure_post_thumbnails_support () {
 		if ( ! current_theme_supports( 'post-thumbnails' ) ) { add_theme_support( 'post-thumbnails' ); }
