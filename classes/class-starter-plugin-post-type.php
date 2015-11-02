@@ -171,7 +171,7 @@ class Starter_Plugin_Post_Type {
 	 * @access public
 	 * @param array $defaults
 	 * @since  1.0.0
-	 * @return void
+	 * @return array $defaults
 	 */
 	public function register_custom_column_headings ( $defaults ) {
 		$new_columns = array( 'image' => __( 'Image', 'starter-plugin' ) );
