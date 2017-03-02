@@ -261,7 +261,7 @@ class Starter_Plugin_Post_Type {
 
 				$html .= '<tr valign="top"><th scope="row"><label for="' . esc_attr( $k ) . '">' . $v['name'] . '</label></th><td><input name="' . esc_attr( $k ) . '" type="text" id="' . esc_attr( $k ) . '" class="regular-text" value="' . esc_attr( $data ) . '" />' . "\n";
 				$html .= '<p class="description">' . $v['description'] . '</p>' . "\n";
-				$html .= '</td><tr/>' . "\n";
+				$html .= '</td></tr>' . "\n";
 			}
 
 			$html .= '</tbody>' . "\n";
