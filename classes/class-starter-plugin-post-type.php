@@ -282,7 +282,11 @@ class Starter_Plugin_Post_Type {
 		global $post, $messages;
 
 		// Verify
-		if ( ( get_post_type() != $this->post_type ) || ! wp_verify_nonce( $_POST['starter-plugin_' . $this->post_type . '_noonce'], plugin_basename( dirname( Starter_Plugin()->plugin_path ) ) ) ) {
+		if ( get_post_type() != $this->post_type ) {
+			return $post_id;
+		}
+
+		if ( ! isset( $_POST['starter-plugin_' . $this->post_type . '_noonce'] ) || ! wp_verify_nonce( $_POST['starter-plugin_' . $this->post_type . '_noonce'], plugin_basename( dirname( Starter_Plugin()->plugin_path ) ) ) ) {
 			return $post_id;
 		}
 
