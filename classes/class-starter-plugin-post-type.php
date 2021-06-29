@@ -139,8 +139,10 @@ class Starter_Plugin_Post_Type {
 	 * @return void
 	 */
 	public function register_taxonomy () {
-		$this->taxonomies['thing-category'] = new Starter_Plugin_Taxonomy(); // Leave arguments empty, to use the default arguments.
-		$this->taxonomies['thing-category']->register();
+		foreach ( $taxonomies as $taxonomy ) :
+			$taxonomy = new Starter_Plugin_Taxonomy( esc_attr( $this->post_type ), $taxonomy, '', '', array() ); // Leave arguments empty, to use the default arguments.
+			$taxonomy->register();
+		endforeach;
 	} // End register_taxonomy()
 
 	/**
@@ -169,7 +171,7 @@ class Starter_Plugin_Post_Type {
 	 * @access public
 	 * @param array $defaults
 	 * @since  1.0.0
-	 * @return void
+	 * @return array $defaults
 	 */
 	public function register_custom_column_headings ( $defaults ) {
 		$new_columns = array( 'image' => __( 'Image', 'starter-plugin' ) );
