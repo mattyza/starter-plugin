@@ -1,5 +1,7 @@
 <?php
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 
 /**
  * Starter Plugin Post Type Class
@@ -59,10 +61,10 @@ class Starter_Plugin_Post_Type {
 	 * @since 1.0.0
 	 */
 	public function __construct( $post_type = 'thing', $singular = '', $plural = '', $args = array(), $taxonomies = array() ) {
-		$this->post_type = $post_type;
-		$this->singular = $singular;
-		$this->plural = $plural;
-		$this->args = $args;
+		$this->post_type  = $post_type;
+		$this->singular   = $singular;
+		$this->plural     = $plural;
+		$this->args       = $args;
 		$this->taxonomies = $taxonomies;
 
 		add_action( 'init', array( $this, 'register_post_type' ) );
@@ -108,7 +110,7 @@ class Starter_Plugin_Post_Type {
 			'menu_name' => $this->plural,
 		);
 
-		$single_slug = apply_filters( 'starter-plugin_single_slug', _x( sanitize_title_with_dashes( $this->singular ), 'single post url slug', 'starter-plugin' ) );
+		$single_slug  = apply_filters( 'starter-plugin_single_slug', _x( sanitize_title_with_dashes( $this->singular ), 'single post url slug', 'starter-plugin' ) );
 		$archive_slug = apply_filters( 'starter-plugin_archive_slug', _x( sanitize_title_with_dashes( $this->plural ), 'post archive url slug', 'starter-plugin' ) );
 
 		$defaults = array(
@@ -157,10 +159,10 @@ class Starter_Plugin_Post_Type {
 		switch ( $column_name ) {
 			case 'image':
 				echo $this->get_image( $id, 40 );
-			break;
+				break;
 
 			default:
-			break;
+				break;
 		}
 	} // End register_custom_columns()
 
@@ -176,7 +178,8 @@ class Starter_Plugin_Post_Type {
 
 		$last_item = array();
 
-		if ( isset( $defaults['date'] ) ) { unset( $defaults['date'] ); }
+		if ( isset( $defaults['date'] ) ) {
+			unset( $defaults['date'] ); }
 
 		if ( count( $defaults ) > 2 ) {
 			$last_item = array_slice( $defaults, -1 );
@@ -211,14 +214,14 @@ class Starter_Plugin_Post_Type {
 			3 => __( 'Custom field deleted.', 'starter-plugin' ),
 			4 => sprintf( __( '%s updated.', 'starter-plugin' ), $this->singular ),
 			/* translators: %s: date and time of the revision */
-			5 => isset($_GET['revision']) ? sprintf( __( '%s restored to revision from %s', 'starter-plugin' ), $this->singular, wp_post_revision_title( (int) $_GET['revision'], false ) ) : false,
+			5 => isset($_GET['revision']) ? sprintf( __( '%1$s restored to revision from %2$s', 'starter-plugin' ), $this->singular, wp_post_revision_title( (int) $_GET['revision'], false ) ) : false,
 			6 => sprintf( __( '%1$s published. %3$sView %2$s%4$s', 'starter-plugin' ), $this->singular, strtolower( $this->singular ), '<a href="' . esc_url( get_permalink( $post_ID ) ) . '">', '</a>' ),
 			7 => sprintf( __( '%s saved.', 'starter-plugin' ), $this->singular ),
-			8 => sprintf( __( '%s submitted. %sPreview %s%s', 'starter-plugin' ), $this->singular, strtolower( $this->singular ), '<a target="_blank" href="' . esc_url( add_query_arg( 'preview', 'true', get_permalink( $post_ID ) ) ) . '">', '</a>' ),
+			8 => sprintf( __( '%1$s submitted. %2$sPreview %3$s%4$s', 'starter-plugin' ), $this->singular, strtolower( $this->singular ), '<a target="_blank" href="' . esc_url( add_query_arg( 'preview', 'true', get_permalink( $post_ID ) ) ) . '">', '</a>' ),
 			9 => sprintf( __( '%s scheduled for: %1$s. %2$sPreview %s%3$s', 'starter-plugin' ), $this->singular, strtolower( $this->singular ),
 			// translators: Publish box date format, see http://php.net/date
 			'<strong>' . date_i18n( __( 'M j, Y @ G:i' ), strtotime( $post->post_date ) ) . '</strong>', '<a target="_blank" href="' . esc_url( get_permalink($post_ID) ) . '">', '</a>' ),
-			10 => sprintf( __( '%s draft updated. %sPreview %s%s', 'starter-plugin' ), $this->singular, strtolower( $this->singular ), '<a target="_blank" href="' . esc_url( add_query_arg( 'preview', 'true', get_permalink( $post_ID ) ) ) . '">', '</a>' ),
+			10 => sprintf( __( '%1$s draft updated. %2$sPreview %3$s%4$s', 'starter-plugin' ), $this->singular, strtolower( $this->singular ), '<a target="_blank" href="' . esc_url( add_query_arg( 'preview', 'true', get_permalink( $post_ID ) ) ) . '">', '</a>' ),
 		);
 
 		return $messages;
@@ -242,7 +245,7 @@ class Starter_Plugin_Post_Type {
 	 */
 	public function meta_box_content () {
 		global $post_id;
-		$fields = get_post_custom( $post_id );
+		$fields     = get_post_custom( $post_id );
 		$field_data = $this->get_custom_fields_settings();
 
 		$html = '';
@@ -301,7 +304,7 @@ class Starter_Plugin_Post_Type {
 		}
 
 		$field_data = $this->get_custom_fields_settings();
-		$fields = array_keys( $field_data );
+		$fields     = array_keys( $field_data );
 
 		foreach ( $fields as $f ) {
 
@@ -314,7 +317,7 @@ class Starter_Plugin_Post_Type {
 
 			if ( get_post_meta( $post_id, '_' . $f ) == '' ) {
 				add_post_meta( $post_id, '_' . $f, ${$f}, true );
-			} elseif( ${$f} != get_post_meta( $post_id, '_' . $f, true ) ) {
+			} elseif ( ${$f} != get_post_meta( $post_id, '_' . $f, true ) ) {
 				update_post_meta( $post_id, '_' . $f, ${$f} );
 			} elseif ( ${$f} == '' ) {
 				delete_post_meta( $post_id, '_' . $f, get_post_meta( $post_id, '_' . $f, true ) );
@@ -346,11 +349,11 @@ class Starter_Plugin_Post_Type {
 		$fields = array();
 
 		$fields['url'] = array(
-		    'name' => __( 'URL', 'starter-plugin' ),
-		    'description' => __( 'Enter a URL that applies to this thing (for example: http://domain.com/).', 'starter-plugin' ),
-		    'type' => 'url',
-		    'default' => '',
-		    'section' => 'info'
+			'name' => __( 'URL', 'starter-plugin' ),
+			'description' => __( 'Enter a URL that applies to this thing (for example: http://domain.com/).', 'starter-plugin' ),
+			'type' => 'url',
+			'default' => '',
+			'section' => 'info'
 		);
 
 		return apply_filters( 'starter-plugin_custom_fields_settings', $fields );
@@ -415,6 +418,7 @@ class Starter_Plugin_Post_Type {
 	 * @since  1.0.0
 	 */
 	public function ensure_post_thumbnails_support () {
-		if ( ! current_theme_supports( 'post-thumbnails' ) ) { add_theme_support( 'post-thumbnails' ); }
+		if ( ! current_theme_supports( 'post-thumbnails' ) ) {
+			add_theme_support( 'post-thumbnails' ); }
 	} // End ensure_post_thumbnails_support()
 } // End Class

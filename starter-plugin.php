@@ -17,7 +17,9 @@
  * @author Matty
  */
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly
+}
 
 /**
  * Returns the main instance of Starter_Plugin to prevent the need to use globals.
@@ -114,24 +116,24 @@ final class Starter_Plugin {
 	 * @since   1.0.0
 	 */
 	public function __construct () {
-		$this->token 			= 'starter-plugin';
-		$this->plugin_url 		= plugin_dir_url( __FILE__ );
-		$this->plugin_path 		= plugin_dir_path( __FILE__ );
-		$this->version 			= '1.0.0';
+		$this->token       = 'starter-plugin';
+		$this->plugin_url  = plugin_dir_url( __FILE__ );
+		$this->plugin_path = plugin_dir_path( __FILE__ );
+		$this->version     = '1.0.0';
 
 		// Admin - Start
-		require_once( 'classes/class-starter-plugin-settings.php' );
+		require_once  'classes/class-starter-plugin-settings.php' ;
 			$this->settings = Starter_Plugin_Settings::instance();
 
 		if ( is_admin() ) {
-			require_once( 'classes/class-starter-plugin-admin.php' );
+			require_once  'classes/class-starter-plugin-admin.php' ;
 			$this->admin = Starter_Plugin_Admin::instance();
 		}
 		// Admin - End
 
 		// Post Types - Start
-		require_once( 'classes/class-starter-plugin-post-type.php' );
-		require_once( 'classes/class-starter-plugin-taxonomy.php' );
+		require_once  'classes/class-starter-plugin-post-type.php' ;
+		require_once  'classes/class-starter-plugin-taxonomy.php' ;
 
 		// Register an example post type. To register other post types, duplicate this line.
 		$this->post_types['thing'] = new Starter_Plugin_Post_Type( 'thing', __( 'Thing', 'starter-plugin' ), __( 'Things', 'starter-plugin' ), array( 'menu_icon' => 'dashicons-carrot' ) );
@@ -152,8 +154,9 @@ final class Starter_Plugin {
 	 * @return Main Starter_Plugin instance
 	 */
 	public static function instance () {
-		if ( is_null( self::$_instance ) )
+		if ( is_null( self::$_instance ) ) {
 			self::$_instance = new self();
+		}
 		return self::$_instance;
 	} // End instance()
 

@@ -1,5 +1,7 @@
 <?php
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly
+}
 
 /**
  * Starter_Plugin_Admin Class
@@ -50,8 +52,9 @@ final class Starter_Plugin_Admin {
 	 * @return Main Starter_Plugin_Admin instance
 	 */
 	public static function instance () {
-		if ( is_null( self::$_instance ) )
+		if ( is_null( self::$_instance ) ) {
 			self::$_instance = new self();
+		}
 		return self::$_instance;
 	} // End instance()
 
@@ -74,7 +77,7 @@ final class Starter_Plugin_Admin {
 	public function settings_screen () {
 		global $title;
 		$sections = Starter_Plugin()->settings->get_settings_sections();
-		$tab = $this->_get_current_tab( $sections );
+		$tab      = $this->_get_current_tab( $sections );
 		?>
 		<div class="wrap starter-plugin-wrap">
 			<?php
@@ -115,7 +118,7 @@ final class Starter_Plugin_Admin {
 	 * @return  void
 	 */
 	public function render_settings ( $args ) {
-		$token = $args['id'];
+		$token  = $args['id'];
 		$fields = Starter_Plugin()->settings->get_settings_fields( $token );
 
 		if ( 0 < count( $fields ) ) {
@@ -137,7 +140,7 @@ final class Starter_Plugin_Admin {
 	 */
 	public function validate_settings ( $input ) {
 		$sections = Starter_Plugin()->settings->get_settings_sections();
-		$tab = $this->_get_current_tab( $sections );
+		$tab      = $this->_get_current_tab( $sections );
 		return Starter_Plugin()->settings->validate_settings( $input, $tab );
 	} // End validate_settings()
 
@@ -185,7 +188,7 @@ final class Starter_Plugin_Admin {
 		} else {
 			if ( is_array( $sections ) && ! empty( $sections ) ) {
 				list( $first_section ) = array_keys( $sections );
-				$response = $first_section;
+				$response              = $first_section;
 			} else {
 				$response = '';
 			}
@@ -206,7 +209,7 @@ final class Starter_Plugin_Admin {
 		$response = array( 'tag' => 'h2', 'atts' => array( 'class' => 'starter-plugin-wrapper' ), 'content' => $title );
 
 		if ( is_array( $sections ) && 1 < count( $sections ) ) {
-			$response['content'] = '';
+			$response['content']       = '';
 			$response['atts']['class'] = 'nav-tab-wrapper';
 
 			$tab = $this->_get_current_tab( $sections );
@@ -221,6 +224,6 @@ final class Starter_Plugin_Admin {
 			}
 		}
 
-		return (array)apply_filters( 'starter-plugin-get-admin-header-data', $response );
+		return (array) apply_filters( 'starter-plugin-get-admin-header-data', $response );
 	} // End _get_admin_header_data()
 } // End Class

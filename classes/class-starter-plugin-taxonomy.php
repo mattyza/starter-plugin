@@ -1,5 +1,7 @@
 <?php
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 
 /**
  * Starter Plugin Taxonomy Class
@@ -65,12 +67,16 @@ class Starter_Plugin_Taxonomy {
 	 */
 	public function __construct ( $post_type = 'thing', $token = 'thing-category', $singular = '', $plural = '', $args = array() ) {
 		$this->post_type = $post_type;
-		$this->token = esc_attr( $token );
-		$this->singular = esc_html( $singular );
-		$this->plural = esc_html( $plural );
+		$this->token     = esc_attr( $token );
+		$this->singular  = esc_html( $singular );
+		$this->plural    = esc_html( $plural );
 
-		if ( '' == $this->singular ) $this->singular = __( 'Category', 'starter-plugin' );
-		if ( '' == $this->plural ) $this->plural = __( 'Categories', 'starter-plugin' );
+		if ( '' == $this->singular ) {
+			$this->singular = __( 'Category', 'starter-plugin' );
+		}
+		if ( '' == $this->plural ) {
+			$this->plural = __( 'Categories', 'starter-plugin' );
+		}
 
 		$this->args = wp_parse_args( $args, $this->_get_default_args() );
 	} // End __construct()
@@ -93,17 +99,17 @@ class Starter_Plugin_Taxonomy {
 	 */
 	private function _get_default_labels () {
 		return array(
-			    'name'                => sprintf( _x( '%s', 'taxonomy general name', 'starter-plugin' ), $this->plural ),
-			    'singular_name'       => sprintf( _x( '%s', 'taxonomy singular name', 'starter-plugin' ), $this->singular ),
-			    'search_items'        => sprintf( __( 'Search %s', 'starter-plugin' ), $this->plural ),
-			    'all_items'           => sprintf( __( 'All %s', 'starter-plugin' ), $this->plural ),
-			    'parent_item'         => sprintf( __( 'Parent %s', 'starter-plugin' ), $this->singular ),
-			    'parent_item_colon'   => sprintf( __( 'Parent %s:', 'starter-plugin' ), $this->singular ),
-			    'edit_item'           => sprintf( __( 'Edit %s', 'starter-plugin' ), $this->singular ),
-			    'update_item'         => sprintf( __( 'Update %s', 'starter-plugin' ), $this->singular ),
-			    'add_new_item'        => sprintf( __( 'Add New %s', 'starter-plugin' ), $this->singular ),
-			    'new_item_name'       => sprintf( __( 'New %s Name', 'starter-plugin' ), $this->singular ),
-			    'menu_name'           => sprintf( __( '%s', 'starter-plugin' ), $this->plural )
+				'name'                => sprintf( _x( '%s', 'taxonomy general name', 'starter-plugin' ), $this->plural ),
+				'singular_name'       => sprintf( _x( '%s', 'taxonomy singular name', 'starter-plugin' ), $this->singular ),
+				'search_items'        => sprintf( __( 'Search %s', 'starter-plugin' ), $this->plural ),
+				'all_items'           => sprintf( __( 'All %s', 'starter-plugin' ), $this->plural ),
+				'parent_item'         => sprintf( __( 'Parent %s', 'starter-plugin' ), $this->singular ),
+				'parent_item_colon'   => sprintf( __( 'Parent %s:', 'starter-plugin' ), $this->singular ),
+				'edit_item'           => sprintf( __( 'Edit %s', 'starter-plugin' ), $this->singular ),
+				'update_item'         => sprintf( __( 'Update %s', 'starter-plugin' ), $this->singular ),
+				'add_new_item'        => sprintf( __( 'Add New %s', 'starter-plugin' ), $this->singular ),
+				'new_item_name'       => sprintf( __( 'New %s Name', 'starter-plugin' ), $this->singular ),
+				'menu_name'           => sprintf( __( '%s', 'starter-plugin' ), $this->plural )
 			  );
 	} // End _get_default_labels()
 
@@ -114,7 +120,7 @@ class Starter_Plugin_Taxonomy {
 	 * @return  void
 	 */
 	public function register () {
-		register_taxonomy( esc_attr( $this->token ), esc_attr( $this->post_type ), (array)$this->args );
+		register_taxonomy( esc_attr( $this->token ), esc_attr( $this->post_type ), (array) $this->args );
 	} // End register()
 } // End Class
-?>
+

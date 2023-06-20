@@ -1,5 +1,7 @@
 <?php
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly
+}
 
 /**
  * Starter_Plugin_Settings Class
@@ -37,8 +39,9 @@ final class Starter_Plugin_Settings {
 	 * @return Main Starter_Plugin_Settings instance
 	 */
 	public static function instance () {
-		if ( is_null( self::$_instance ) )
+		if ( is_null( self::$_instance ) ) {
 			self::$_instance = new self();
+		}
 		return self::$_instance;
 	} // End instance()
 
@@ -71,7 +74,7 @@ final class Starter_Plugin_Settings {
 				$method = 'validate_field_' . $fields[$k]['type'];
 
 				if ( ! method_exists( $this, $method ) ) {
-					if ( true === (bool)apply_filters( 'starter-plugin-validate-field-' . $fields[$k]['type'] . '_use_default', true ) ) {
+					if ( true === (bool) apply_filters( 'starter-plugin-validate-field-' . $fields[$k]['type'] . '_use_default', true ) ) {
 						$method = 'validate_field_text';
 					} else {
 						$method = '';
@@ -100,7 +103,7 @@ final class Starter_Plugin_Settings {
 	 * @return  void
 	 */
 	public function validate_field_text ( $v ) {
-		return (string)wp_kses_post( $v );
+		return (string) wp_kses_post( $v );
 	} // End validate_field_text()
 
 	/**
@@ -111,8 +114,8 @@ final class Starter_Plugin_Settings {
 	 */
 	public function validate_field_textarea ( $v ) {
 		// Allow iframe, object and embed tags in textarea fields.
-		$allowed 			= wp_kses_allowed_html( 'post' );
-		$allowed['iframe'] 	= array(
+		$allowed           = wp_kses_allowed_html( 'post' );
+		$allowed['iframe'] = array(
 								'src' 		=> true,
 								'width' 	=> true,
 								'height' 	=> true,
@@ -120,7 +123,7 @@ final class Starter_Plugin_Settings {
 								'class' 	=> true,
 								'name' 		=> true
 								);
-		$allowed['object'] 	= array(
+		$allowed['object'] = array(
 								'src' 		=> true,
 								'width' 	=> true,
 								'height' 	=> true,
@@ -128,7 +131,7 @@ final class Starter_Plugin_Settings {
 								'class' 	=> true,
 								'name' 		=> true
 								);
-		$allowed['embed'] 	= array(
+		$allowed['embed']  = array(
 								'src' 		=> true,
 								'width' 	=> true,
 								'height' 	=> true,
@@ -175,7 +178,9 @@ final class Starter_Plugin_Settings {
 	 */
 	public function render_field ( $args ) {
 		$html = '';
-		if ( ! in_array( $args['type'], $this->get_supported_fields() ) ) return ''; // Supported field type sanity check.
+		if ( ! in_array( $args['type'], $this->get_supported_fields() ) ) {
+			return ''; // Supported field type sanity check.
+		}
 
 		// Make sure we have some kind of default, if the key isn't set.
 		if ( ! isset( $args['default'] ) ) {
@@ -189,18 +194,18 @@ final class Starter_Plugin_Settings {
 		}
 
 		// Construct the key.
-		$key 				= Starter_Plugin()->token . '-' . $args['section'] . '[' . $args['id'] . ']';
-		$method_output 		= $this->$method( $key, $args );
+		$key           = Starter_Plugin()->token . '-' . $args['section'] . '[' . $args['id'] . ']';
+		$method_output = $this->$method( $key, $args );
 
 		if ( ! is_wp_error( $method_output ) ) {
 			$html .= $method_output;
 		}
 
 		// Output the description, if the current field allows it.
-		if ( isset( $args['type'] ) && ! in_array( $args['type'], (array)apply_filters( 'starter-plugin-no-description-fields', array( 'checkbox' ) ) ) ) {
+		if ( isset( $args['type'] ) && ! in_array( $args['type'], (array) apply_filters( 'starter-plugin-no-description-fields', array( 'checkbox' ) ) ) ) {
 			if ( isset( $args['description'] ) ) {
 				$description = '<p class="description">' . wp_kses_post( $args['description'] ) . '</p>' . "\n";
-				if ( in_array( $args['type'], (array)apply_filters( 'starter-plugin-new-line-description-fields', array( 'textarea', 'select' ) ) ) ) {
+				if ( in_array( $args['type'], (array) apply_filters( 'starter-plugin-new-line-description-fields', array( 'textarea', 'select' ) ) ) ) {
 					$description = wpautop( $description );
 				}
 				$html .= $description;
@@ -220,12 +225,12 @@ final class Starter_Plugin_Settings {
 		$settings_sections = array();
 
 		$settings_sections['standard-fields'] = __( 'Standard Fields', 'starter-plugin' );
-		$settings_sections['special-fields'] = __( 'Special Fields', 'starter-plugin' );
+		$settings_sections['special-fields']  = __( 'Special Fields', 'starter-plugin' );
 		// Add your new sections below here.
 		// Admin tabs will be created for each section.
 		// Don't forget to add fields for the section in the get_settings_fields() function below
 
-		return (array)apply_filters( 'starter-plugin-settings-sections', $settings_sections );
+		return (array) apply_filters( 'starter-plugin-settings-sections', $settings_sections );
 	} // End get_settings_sections()
 
 	/**
@@ -241,8 +246,7 @@ final class Starter_Plugin_Settings {
 
 		switch ( $section ) {
 			case 'standard-fields':
-
-				$settings_fields['text'] = array(
+				$settings_fields['text']     = array(
 												'name' => __( 'Example Text Input', 'starter-plugin' ),
 												'type' => 'text',
 												'default' => '',
@@ -263,7 +267,7 @@ final class Starter_Plugin_Settings {
 												'section' => 'standard-fields',
 												'description' => __( 'Place the field description text here.', 'starter-plugin' )
 											);
-				$settings_fields['radio'] = array(
+				$settings_fields['radio']    = array(
 												'name' => __( 'Example Radio Buttons', 'starter-plugin' ),
 												'type' => 'radio',
 												'default' => '',
@@ -275,7 +279,7 @@ final class Starter_Plugin_Settings {
 															),
 												'description' => __( 'Place the field description text here.', 'starter-plugin' )
 											);
-				$settings_fields['select'] = array(
+				$settings_fields['select']   = array(
 													'name' => __( 'Example Select', 'starter-plugin' ),
 													'type' => 'select',
 													'default' => '',
@@ -290,7 +294,6 @@ final class Starter_Plugin_Settings {
 
 				break;
 			case 'special-fields':
-
 				$settings_fields['select_taxonomy'] = array(
 													'name' => __( 'Example Taxonomy Selector', 'starter-plugin' ),
 													'type' => 'select_taxonomy',
@@ -305,7 +308,7 @@ final class Starter_Plugin_Settings {
 				break;
 		}
 
-		return (array)apply_filters( 'starter-plugin-settings-fields', $settings_fields );
+		return (array) apply_filters( 'starter-plugin-settings-fields', $settings_fields );
 	} // End get_settings_fields()
 
 	/**
@@ -331,7 +334,7 @@ final class Starter_Plugin_Settings {
 	 */
 	protected function render_field_radio ( $key, $args ) {
 		$html = '';
-		if ( isset( $args['options'] ) && ( 0 < count( (array)$args['options'] ) ) ) {
+		if ( isset( $args['options'] ) && ( 0 < count( (array) $args['options'] ) ) ) {
 			$html = '';
 			foreach ( $args['options'] as $k => $v ) {
 				$html .= '<input type="radio" name="' . esc_attr( $key ) . '" value="' . esc_attr( $k ) . '"' . checked( esc_attr( $this->get_value( $args['id'], $args['default'], $args['section'] ) ), $k, false ) . ' /> ' . esc_html( $v ) . '<br />' . "\n";
@@ -364,10 +367,10 @@ final class Starter_Plugin_Settings {
 	 */
 	protected function render_field_checkbox ( $key, $args ) {
 		$has_description = false;
-		$html = '';
+		$html            = '';
 		if ( isset( $args['description'] ) ) {
 			$has_description = true;
-			$html .= '<label for="' . esc_attr( $key ) . '">' . "\n";
+			$html           .= '<label for="' . esc_attr( $key ) . '">' . "\n";
 		}
 		$html .= '<input id="' . esc_attr( $key ) . '" name="' . esc_attr( $key ) . '" type="checkbox" value="true"' . checked( esc_attr( $this->get_value( $args['id'], $args['default'], $args['section'] ) ), 'true', false ) . ' />' . "\n";
 		if ( $has_description ) {
@@ -388,11 +391,11 @@ final class Starter_Plugin_Settings {
 		$this->_has_select = true;
 
 		$html = '';
-		if ( isset( $args['options'] ) && ( 0 < count( (array)$args['options'] ) ) ) {
+		if ( isset( $args['options'] ) && ( 0 < count( (array) $args['options'] ) ) ) {
 			$html .= '<select id="' . esc_attr( $key ) . '" name="' . esc_attr( $key ) . '">' . "\n";
-				foreach ( $args['options'] as $k => $v ) {
-					$html .= '<option value="' . esc_attr( $k ) . '"' . selected( esc_attr( $this->get_value( $args['id'], $args['default'], $args['section'] ) ), $k, false ) . '>' . esc_html( $v ) . '</option>' . "\n";
-				}
+			foreach ( $args['options'] as $k => $v ) {
+				$html .= '<option value="' . esc_attr( $k ) . '"' . selected( esc_attr( $this->get_value( $args['id'], $args['default'], $args['section'] ) ), $k, false ) . '>' . esc_html( $v ) . '</option>' . "\n";
+			}
 			$html .= '</select>' . "\n";
 		}
 		return $html;
@@ -426,18 +429,18 @@ final class Starter_Plugin_Settings {
 			'taxonomy'           => 'category',
 			'hide_if_empty'      => false,
 			'walker'             => ''
-        );
+		);
 
 		if ( ! isset( $args['options'] ) ) {
 			$args['options'] = array();
 		}
 
-		$args['options'] 			= wp_parse_args( $args['options'], $defaults );
-		$args['options']['echo'] 	= false;
-		$args['options']['name'] 	= esc_attr( $key );
-		$args['options']['id'] 		= esc_attr( $key );
+		$args['options']         = wp_parse_args( $args['options'], $defaults );
+		$args['options']['echo'] = false;
+		$args['options']['name'] = esc_attr( $key );
+		$args['options']['id']   = esc_attr( $key );
 
-		$html = '';
+		$html  = '';
 		$html .= wp_dropdown_categories( $args['options'] );
 
 		return $html;
@@ -470,7 +473,7 @@ final class Starter_Plugin_Settings {
 	 * @return  array Supported field type keys.
 	 */
 	public function get_supported_fields () {
-		return (array)apply_filters( 'starter-plugin-supported-fields', array( 'text', 'checkbox', 'radio', 'textarea', 'select', 'select_taxonomy' ) );
+		return (array) apply_filters( 'starter-plugin-supported-fields', array( 'text', 'checkbox', 'radio', 'textarea', 'select', 'select_taxonomy' ) );
 	} // End get_supported_fields()
 
 	/**
@@ -504,7 +507,7 @@ final class Starter_Plugin_Settings {
 	public function get_settings ( $section = '' ) {
 		$response = false;
 
-		$sections = array_keys( (array)$this->get_settings_sections() );
+		$sections = array_keys( (array) $this->get_settings_sections() );
 
 		if ( in_array( $section, $sections ) ) {
 			$sections = array( $section );
