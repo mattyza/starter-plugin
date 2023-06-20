@@ -1,32 +1,34 @@
 <?xml version="1.0"?>
-<ruleset>
-	<arg name="basepath" value="."/>
-	<arg name="extensions" value="php"/>
-	<arg name="severity" value="4"/>
-	<arg name="tab-width" value="4"/>
-	<arg name="parallel" value="80"/>
-	<arg name="cache" value=".phpcs-cache"/>
-	<arg name="colors"/>
+<ruleset name="WordPress Coding Standards">
+	<description>WooCommerce extension PHP_CodeSniffer ruleset.</description>
 
-	<exclude-pattern>*/.git/*</exclude-pattern>
-	<exclude-pattern>.github/</exclude-pattern>
-	<exclude-pattern>*/vendor/*</exclude-pattern>
+	<!-- Exclude paths -->
+	<exclude-pattern>tests/</exclude-pattern>
 	<exclude-pattern>*/node_modules/*</exclude-pattern>
-	<exclude-pattern>*/tests/*</exclude-pattern>
-	<exclude-pattern>*/bin/*</exclude-pattern>
+	<exclude-pattern>*/vendor/*</exclude-pattern>
 
-	<config name="testVersion" value="7.4"/>
-	<config name="php_version" value="70407"/>
+	<!-- Configs -->
+	<config name="minimum_supported_wp_version" value="4.7" />
+	<config name="testVersion" value="5.6-" />
 
-	<!-- Ignore warnings, show progress of the run and show sniff names -->
-	<arg value="nps"/>
+	<!-- Rules -->
+	<rule ref="WordPress-Extra">
+		<exclude name="Generic.Commenting.DocComment.SpacingAfter" />
+		<exclude name="Generic.Files.LineEndings.InvalidEOLChar" />
+		<exclude name="Generic.Functions.FunctionCallArgumentSpacing.SpaceBeforeComma" />
+		<exclude name="PEAR.Functions.FunctionCallSignature" />
+		<exclude name="Squiz.Commenting" />
+		<exclude name="Squiz.PHP.DisallowSizeFunctionsInLoops.Found" />
+		<exclude name="Squiz.WhiteSpace" />
+		<exclude name="WordPress.Arrays" />
+		<exclude name="WordPress.Files.FileName" />
+		<exclude name="WordPress.NamingConventions" />
+		<exclude name="WordPress.Security.ValidatedSanitizedInput.MissingUnslash" />
+		<exclude name="WordPress.WP.I18n.NonSingularStringLiteralText" />
+		<exclude name="WordPress.WhiteSpace" />
+	</rule>
 
-	<!-- Directories to be checked -->
-	<file>.</file>
-
-	<!-- WordPress -->
-	<rule ref="WordPressVIPMinimum"/>
-	<rule ref="WordPress-Extra"/>
-	<rule ref="PSR2.Methods.FunctionClosingBrace"/>
-
+	<rule ref="PHPCompatibility">
+		<exclude-pattern>tests/</exclude-pattern>
+	</rule>
 </ruleset>
