@@ -19,7 +19,7 @@ final class Starter_Plugin_Settings {
 	 * @access  private
 	 * @since 	1.0.0
 	 */
-	private static $_instance = null;
+	private static $instance = null;
 
 	/**
 	 * Whether or not a 'select' field is present.
@@ -27,7 +27,7 @@ final class Starter_Plugin_Settings {
 	 * @access  private
 	 * @since   1.0.0
 	 */
-	private $_has_select;
+	private $has_select;
 
 	/**
 	 * Main Starter_Plugin_Settings Instance
@@ -39,10 +39,10 @@ final class Starter_Plugin_Settings {
 	 * @return Main Starter_Plugin_Settings instance
 	 */
 	public static function instance () {
-		if ( is_null( self::$_instance ) ) {
-			self::$_instance = new self();
+		if ( is_null( self::$instance ) ) {
+			self::$instance = new self();
 		}
-		return self::$_instance;
+		return self::$instance;
 	} // End instance()
 
 	/**
@@ -66,15 +66,15 @@ final class Starter_Plugin_Settings {
 			$fields = $this->get_settings_fields( $section );
 
 			foreach ( $input as $k => $v ) {
-				if ( ! isset( $fields[$k] ) ) {
+				if ( ! isset( $fields[ $k ] ) ) {
 					continue;
 				}
 
 				// Determine if a method is available for validating this field.
-				$method = 'validate_field_' . $fields[$k]['type'];
+				$method = 'validate_field_' . $fields[ $k ]['type'];
 
 				if ( ! method_exists( $this, $method ) ) {
-					if ( true === (bool) apply_filters( 'starter-plugin-validate-field-' . $fields[$k]['type'] . '_use_default', true ) ) {
+					if ( true === (bool) apply_filters( 'starter-plugin-validate-field-' . $fields[ $k ]['type'] . '_use_default', true ) ) {
 						$method = 'validate_field_text';
 					} else {
 						$method = '';
@@ -82,14 +82,14 @@ final class Starter_Plugin_Settings {
 				}
 
 				// If we have an internal method for validation, filter and apply it.
-				if ( '' != $method ) {
-					add_filter( 'starter-plugin-validate-field-' . $fields[$k]['type'], array( $this, $method ) );
+				if ( '' !== $method ) {
+					add_filter( 'starter-plugin-validate-field-' . $fields[ $k ]['type'], array( $this, $method ) );
 				}
 
-				$method_output = apply_filters( 'starter-plugin-validate-field-' . $fields[$k]['type'], $v, $fields[$k] );
+				$method_output = apply_filters( 'starter-plugin-validate-field-' . $fields[ $k ]['type'], $v, $fields[ $k ] );
 
 				if ( ! is_wp_error( $method_output ) ) {
-					$input[$k] = $method_output;
+					$input[ $k ] = $method_output;
 				}
 			}
 		}
@@ -116,29 +116,29 @@ final class Starter_Plugin_Settings {
 		// Allow iframe, object and embed tags in textarea fields.
 		$allowed           = wp_kses_allowed_html( 'post' );
 		$allowed['iframe'] = array(
-								'src' 		=> true,
-								'width' 	=> true,
-								'height' 	=> true,
-								'id' 		=> true,
-								'class' 	=> true,
-								'name' 		=> true
-								);
+			'src'    => true,
+			'width'  => true,
+			'height' => true,
+			'id'     => true,
+			'class'  => true,
+			'name'   => true,
+		);
 		$allowed['object'] = array(
-								'src' 		=> true,
-								'width' 	=> true,
-								'height' 	=> true,
-								'id' 		=> true,
-								'class' 	=> true,
-								'name' 		=> true
-								);
+			'src'    => true,
+			'width'  => true,
+			'height' => true,
+			'id'     => true,
+			'class'  => true,
+			'name'   => true,
+		);
 		$allowed['embed']  = array(
-								'src' 		=> true,
-								'width' 	=> true,
-								'height' 	=> true,
-								'id' 		=> true,
-								'class' 	=> true,
-								'name' 		=> true
-								);
+			'src'    => true,
+			'width'  => true,
+			'height' => true,
+			'id'     => true,
+			'class'  => true,
+			'name'   => true,
+		);
 
 		return wp_kses( $v, $allowed );
 	} // End validate_field_textarea()
@@ -151,7 +151,7 @@ final class Starter_Plugin_Settings {
 	 * @return string
 	 */
 	public function validate_field_checkbox ( $v ) {
-		if ( 'true' != $v ) {
+		if ( 'true' !== $v ) {
 			return 'false';
 		} else {
 			return 'true';
@@ -178,7 +178,7 @@ final class Starter_Plugin_Settings {
 	 */
 	public function render_field ( $args ) {
 		$html = '';
-		if ( ! in_array( $args['type'], $this->get_supported_fields() ) ) {
+		if ( ! in_array( $args['type'], $this->get_supported_fields(), true ) ) {
 			return ''; // Supported field type sanity check.
 		}
 
@@ -202,10 +202,10 @@ final class Starter_Plugin_Settings {
 		}
 
 		// Output the description, if the current field allows it.
-		if ( isset( $args['type'] ) && ! in_array( $args['type'], (array) apply_filters( 'starter-plugin-no-description-fields', array( 'checkbox' ) ) ) ) {
+		if ( isset( $args['type'] ) && ! in_array( $args['type'], (array) apply_filters( 'starter-plugin-no-description-fields', array( 'checkbox' ) ), true ) ) {
 			if ( isset( $args['description'] ) ) {
 				$description = '<p class="description">' . wp_kses_post( $args['description'] ) . '</p>' . "\n";
-				if ( in_array( $args['type'], (array) apply_filters( 'starter-plugin-new-line-description-fields', array( 'textarea', 'select' ) ) ) ) {
+				if ( in_array( $args['type'], (array) apply_filters( 'starter-plugin-new-line-description-fields', array( 'textarea', 'select' ) ), true ) ) {
 					$description = wpautop( $description );
 				}
 				$html .= $description;
@@ -247,60 +247,60 @@ final class Starter_Plugin_Settings {
 		switch ( $section ) {
 			case 'standard-fields':
 				$settings_fields['text']     = array(
-												'name' => __( 'Example Text Input', 'starter-plugin' ),
-												'type' => 'text',
-												'default' => '',
-												'section' => 'standard-fields',
-												'description' => __( 'Place the field description text here.', 'starter-plugin' )
-											);
+					'name'        => __( 'Example Text Input', 'starter-plugin' ),
+					'type'        => 'text',
+					'default'     => '',
+					'section'     => 'standard-fields',
+					'description' => __( 'Place the field description text here.', 'starter-plugin' ),
+				);
 				$settings_fields['textarea'] = array(
-												'name' => __( 'Example Textarea', 'starter-plugin' ),
-												'type' => 'textarea',
-												'default' => '',
-												'section' => 'standard-fields',
-												'description' => __( 'Place the field description text here.', 'starter-plugin' )
-											);
+					'name'        => __( 'Example Textarea', 'starter-plugin' ),
+					'type'        => 'textarea',
+					'default'     => '',
+					'section'     => 'standard-fields',
+					'description' => __( 'Place the field description text here.', 'starter-plugin' ),
+				);
 				$settings_fields['checkbox'] = array(
-												'name' => __( 'Example Checkbox', 'starter-plugin' ),
-												'type' => 'checkbox',
-												'default' => '',
-												'section' => 'standard-fields',
-												'description' => __( 'Place the field description text here.', 'starter-plugin' )
-											);
+					'name'        => __( 'Example Checkbox', 'starter-plugin' ),
+					'type'        => 'checkbox',
+					'default'     => '',
+					'section'     => 'standard-fields',
+					'description' => __( 'Place the field description text here.', 'starter-plugin' ),
+				);
 				$settings_fields['radio']    = array(
-												'name' => __( 'Example Radio Buttons', 'starter-plugin' ),
-												'type' => 'radio',
-												'default' => '',
-												'section' => 'standard-fields',
-												'options' => array(
-																	'one' => __( 'One', 'starter-plugin' ),
-																	'two' => __( 'Two', 'starter-plugin' ),
-																	'three' => __( 'Three', 'starter-plugin' )
-															),
-												'description' => __( 'Place the field description text here.', 'starter-plugin' )
-											);
+					'name'        => __( 'Example Radio Buttons', 'starter-plugin' ),
+					'type'        => 'radio',
+					'default'     => '',
+					'section'     => 'standard-fields',
+					'options'     => array(
+						'one'   => __( 'One', 'starter-plugin' ),
+						'two'   => __( 'Two', 'starter-plugin' ),
+						'three' => __( 'Three', 'starter-plugin' ),
+					),
+					'description' => __( 'Place the field description text here.', 'starter-plugin' ),
+				);
 				$settings_fields['select']   = array(
-													'name' => __( 'Example Select', 'starter-plugin' ),
-													'type' => 'select',
-													'default' => '',
-													'section' => 'standard-fields',
-													'options' => array(
-																	'one' => __( 'One', 'starter-plugin' ),
-																	'two' => __( 'Two', 'starter-plugin' ),
-																	'three' => __( 'Three', 'starter-plugin' )
-																),
-													'description' => __( 'Place the field description text here.', 'starter-plugin' )
-											);
+					'name'        => __( 'Example Select', 'starter-plugin' ),
+					'type'        => 'select',
+					'default'     => '',
+					'section'     => 'standard-fields',
+					'options'     => array(
+						'one'   => __( 'One', 'starter-plugin' ),
+						'two'   => __( 'Two', 'starter-plugin' ),
+						'three' => __( 'Three', 'starter-plugin' ),
+					),
+					'description' => __( 'Place the field description text here.', 'starter-plugin' ),
+				);
 
 				break;
 			case 'special-fields':
 				$settings_fields['select_taxonomy'] = array(
-													'name' => __( 'Example Taxonomy Selector', 'starter-plugin' ),
-													'type' => 'select_taxonomy',
-													'default' => '',
-													'section' => 'special-fields',
-													'description' => __( 'Place the field description text here.', 'starter-plugin' )
-											);
+					'name'        => __( 'Example Taxonomy Selector', 'starter-plugin' ),
+					'type'        => 'select_taxonomy',
+					'default'     => '',
+					'section'     => 'special-fields',
+					'description' => __( 'Place the field description text here.', 'starter-plugin' ),
+				);
 
 				break;
 			default:
@@ -388,7 +388,7 @@ final class Starter_Plugin_Settings {
 	 * @return  string       HTML markup for the field.
 	 */
 	protected function render_field_select ( $key, $args ) {
-		$this->_has_select = true;
+		$this->has_select = true;
 
 		$html = '';
 		if ( isset( $args['options'] ) && ( 0 < count( (array) $args['options'] ) ) ) {
@@ -410,25 +410,25 @@ final class Starter_Plugin_Settings {
 	 * @return  string       HTML markup for the field.
 	 */
 	protected function render_field_select_taxonomy ( $key, $args ) {
-		$this->_has_select = true;
+		$this->has_select = true;
 
 		$defaults = array(
-			'show_option_all'    => '',
-			'show_option_none'   => '',
-			'orderby'            => 'ID',
-			'order'              => 'ASC',
-			'show_count'         => 0,
-			'hide_empty'         => 1,
-			'child_of'           => 0,
-			'exclude'            => '',
-			'selected'           => $this->get_value( $args['id'], $args['default'], $args['section'] ),
-			'hierarchical'       => 1,
-			'class'              => 'postform',
-			'depth'              => 0,
-			'tab_index'          => 0,
-			'taxonomy'           => 'category',
-			'hide_if_empty'      => false,
-			'walker'             => ''
+			'show_option_all'  => '',
+			'show_option_none' => '',
+			'orderby'          => 'ID',
+			'order'            => 'ASC',
+			'show_count'       => 0,
+			'hide_empty'       => 1,
+			'child_of'         => 0,
+			'exclude'          => '',
+			'selected'         => $this->get_value( $args['id'], $args['default'], $args['section'] ),
+			'hierarchical'     => 1,
+			'class'            => 'postform',
+			'depth'            => 0,
+			'tab_index'        => 0,
+			'taxonomy'         => 'category',
+			'hide_if_empty'    => false,
+			'walker'           => '',
 		);
 
 		if ( ! isset( $args['options'] ) ) {
@@ -488,8 +488,8 @@ final class Starter_Plugin_Settings {
 	public function get_value ( $key, $default, $section ) {
 		$values = get_option( 'starter-plugin-' . $section, array() );
 
-		if ( is_array( $values ) && isset( $values[$key] ) ) {
-			$response = $values[$key];
+		if ( is_array( $values ) && isset( $values[ $key ] ) ) {
+			$response = $values[ $key ];
 		} else {
 			$response = $default;
 		}
@@ -509,7 +509,7 @@ final class Starter_Plugin_Settings {
 
 		$sections = array_keys( (array) $this->get_settings_sections() );
 
-		if ( in_array( $section, $sections ) ) {
+		if ( in_array( $section, $sections, true ) ) {
 			$sections = array( $section );
 		}
 
@@ -521,14 +521,14 @@ final class Starter_Plugin_Settings {
 				if ( is_array( $fields ) && 0 < count( $fields ) ) {
 					foreach ( $fields as $i => $j ) {
 						// If we have a value stored, use it.
-						if ( isset( $values[$i] ) ) {
-							$response[$i] = $values[$i];
+						if ( isset( $values[ $i ] ) ) {
+							$response[ $i ] = $values[ $i ];
 						} else {
 							// Otherwise, check for a default value. If we have one, use it. Otherwise, return an empty string.
-							if ( isset( $fields[$i]['default'] ) ) {
-								$response[$i] = $fields[$i]['default'];
+							if ( isset( $fields[ $i ]['default'] ) ) {
+								$response[ $i ] = $fields[ $i ]['default'];
 							} else {
-								$response[$i] = '';
+								$response[ $i ] = '';
 							}
 						}
 					}

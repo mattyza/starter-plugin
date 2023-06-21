@@ -49,7 +49,7 @@ final class Starter_Plugin {
 	 * @access  private
 	 * @since 	1.0.0
 	 */
-	private static $_instance = null;
+	private static $instance = null;
 
 	/**
 	 * The token.
@@ -122,18 +122,18 @@ final class Starter_Plugin {
 		$this->version     = '1.0.0';
 
 		// Admin - Start
-		require_once  'classes/class-starter-plugin-settings.php' ;
+		require_once 'classes/class-starter-plugin-settings.php';
 			$this->settings = Starter_Plugin_Settings::instance();
 
 		if ( is_admin() ) {
-			require_once  'classes/class-starter-plugin-admin.php' ;
+			require_once 'classes/class-starter-plugin-admin.php';
 			$this->admin = Starter_Plugin_Admin::instance();
 		}
 		// Admin - End
 
 		// Post Types - Start
-		require_once  'classes/class-starter-plugin-post-type.php' ;
-		require_once  'classes/class-starter-plugin-taxonomy.php' ;
+		require_once 'classes/class-starter-plugin-post-type.php';
+		require_once 'classes/class-starter-plugin-taxonomy.php';
 
 		// Register an example post type. To register other post types, duplicate this line.
 		$this->post_types['thing'] = new Starter_Plugin_Post_Type( 'thing', __( 'Thing', 'starter-plugin' ), __( 'Things', 'starter-plugin' ), array( 'menu_icon' => 'dashicons-carrot' ) );
@@ -154,10 +154,10 @@ final class Starter_Plugin {
 	 * @return Main Starter_Plugin instance
 	 */
 	public static function instance () {
-		if ( is_null( self::$_instance ) ) {
-			self::$_instance = new self();
+		if ( is_null( self::$instance ) ) {
+			self::$instance = new self();
 		}
-		return self::$_instance;
+		return self::$instance;
 	} // End instance()
 
 	/**
@@ -174,18 +174,14 @@ final class Starter_Plugin {
 	 * @access public
 	 * @since 1.0.0
 	 */
-	public function __clone () {
-		_doing_it_wrong( __FUNCTION__, __( 'Cheatin&#8217; huh?' ), '1.0.0' );
-	} // End __clone()
+	public function __clone () {} // End __clone()
 
 	/**
 	 * Unserializing instances of this class is forbidden.
 	 * @access public
 	 * @since 1.0.0
 	 */
-	public function __wakeup () {
-		_doing_it_wrong( __FUNCTION__, __( 'Cheatin&#8217; huh?' ), '1.0.0' );
-	} // End __wakeup()
+	public function __wakeup () {} // End __wakeup()
 
 	/**
 	 * Installation. Runs on activation.
@@ -193,7 +189,7 @@ final class Starter_Plugin {
 	 * @since   1.0.0
 	 */
 	public function install () {
-		$this->_log_version_number();
+		$this->log_version_number();
 	} // End install()
 
 	/**
@@ -201,7 +197,7 @@ final class Starter_Plugin {
 	 * @access  private
 	 * @since   1.0.0
 	 */
-	private function _log_version_number () {
+	private function log_version_number () {
 		// Log the version number.
 		update_option( $this->token . '-version', $this->version );
 	} // End _log_version_number()

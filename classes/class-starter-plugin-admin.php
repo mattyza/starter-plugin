@@ -19,7 +19,7 @@ final class Starter_Plugin_Admin {
 	 * @access  private
 	 * @since 	1.0.0
 	 */
-	private static $_instance = null;
+	private static $instance = null;
 
 	/**
 	 * The string containing the dynamically generated hook token.
@@ -27,7 +27,7 @@ final class Starter_Plugin_Admin {
 	 * @access  private
 	 * @since   1.0.0
 	 */
-	private $_hook;
+	private $hook;
 
 	/**
 	 * Constructor function.
@@ -52,10 +52,10 @@ final class Starter_Plugin_Admin {
 	 * @return Main Starter_Plugin_Admin instance
 	 */
 	public static function instance () {
-		if ( is_null( self::$_instance ) ) {
-			self::$_instance = new self();
+		if ( is_null( self::$instance ) ) {
+			self::$instance = new self();
 		}
-		return self::$_instance;
+		return self::$instance;
 	} // End instance()
 
 	/**
@@ -65,7 +65,7 @@ final class Starter_Plugin_Admin {
 	 * @return  void
 	 */
 	public function register_settings_screen () {
-		$this->_hook = add_submenu_page( 'options-general.php', __( 'Starter Plugin Settings', 'starter-plugin' ), __( 'Starter Plugin', 'starter-plugin' ), 'manage_options', 'starter-plugin', array( $this, 'settings_screen' ) );
+		$this->hook = add_submenu_page( 'options-general.php', __( 'Starter Plugin Settings', 'starter-plugin' ), __( 'Starter Plugin', 'starter-plugin' ), 'manage_options', 'starter-plugin', array( $this, 'settings_screen' ) );
 	} // End register_settings_screen()
 
 	/**
@@ -77,11 +77,11 @@ final class Starter_Plugin_Admin {
 	public function settings_screen () {
 		global $title;
 		$sections = Starter_Plugin()->settings->get_settings_sections();
-		$tab      = $this->_get_current_tab( $sections );
+		$tab      = $this->get_current_tab( $sections );
 		?>
 		<div class="wrap starter-plugin-wrap">
 			<?php
-				echo $this->get_admin_header_html( $sections, $title );
+				$this->admin_header_html( $sections, $title );
 			?>
 			<form action="options.php" method="post">
 				<?php
@@ -126,7 +126,7 @@ final class Starter_Plugin_Admin {
 				$args 		= $v;
 				$args['id'] = $k;
 
-				add_settings_field( $k, $v['name'], array( Starter_Plugin()->settings, 'render_field' ), 'starter-plugin-' . $token , $v['section'], $args );
+				add_settings_field( $k, $v['name'], array( Starter_Plugin()->settings, 'render_field' ), 'starter-plugin-' . $token, $v['section'], $args );
 			}
 		}
 	} // End render_settings()
@@ -154,17 +154,17 @@ final class Starter_Plugin_Admin {
 	 */
 	public function get_admin_header_html ( $sections, $title ) {
 		$defaults = array(
-							'tag' => 'h2',
-							'atts' => array( 'class' => 'starter-plugin-wrapper' ),
-							'content' => $title
-						);
+			'tag'     => 'h2',
+			'atts'    => array( 'class' => 'starter-plugin-wrapper' ),
+			'content' => $title,
+		);
 
-		$args = $this->_get_admin_header_data( $sections, $title );
+		$args = $this->get_admin_header_data( $sections, $title );
 
 		$args = wp_parse_args( $args, $defaults );
 
 		$atts = '';
-		if ( 0 < count ( $args['atts'] ) ) {
+		if ( 0 < count( $args['atts'] ) ) {
 			foreach ( $args['atts'] as $k => $v ) {
 				$atts .= ' ' . esc_attr( $k ) . '="' . esc_attr( $v ) . '"';
 			}
@@ -176,14 +176,26 @@ final class Starter_Plugin_Admin {
 	} // End get_admin_header_html()
 
 	/**
+	 * Print marked up HTML for the header tag on the settings screen.
+	 * @access  public
+	 * @since   1.0.0
+	 * @param   array  $sections Sections to scan through.
+	 * @param   string $title    Title to use, if only one section is present.
+	 * @return  string 			 The current tab key.
+	 */
+	public function admin_header_html ( $sections, $title ) {
+		return $this->get_admin_header_html( $sections, $title );
+	}
+
+	/**
 	 * Return the current tab key.
 	 * @access  private
 	 * @since   1.0.0
 	 * @param   array  $sections Sections to scan through for a section key.
 	 * @return  string 			 The current tab key.
 	 */
-	private function _get_current_tab ( $sections = array() ) {
-		if ( isset ( $_GET['tab'] ) ) {
+	private function get_current_tab ( $sections = array() ) {
+		if ( isset( $_GET['tab'] ) ) {
 			$response = sanitize_title_with_dashes( $_GET['tab'] );
 		} else {
 			if ( is_array( $sections ) && ! empty( $sections ) ) {
@@ -205,18 +217,22 @@ final class Starter_Plugin_Admin {
 	 * @param   string $title    Title to use, if only one section is present.
 	 * @return  array 			 An array of data with which to mark up the header HTML.
 	 */
-	private function _get_admin_header_data ( $sections, $title ) {
-		$response = array( 'tag' => 'h2', 'atts' => array( 'class' => 'starter-plugin-wrapper' ), 'content' => $title );
+	private function get_admin_header_data ( $sections, $title ) {
+		$response = array(
+			'tag'     => 'h2',
+			'atts'    => array( 'class' => 'starter-plugin-wrapper' ),
+			'content' => $title,
+		);
 
 		if ( is_array( $sections ) && 1 < count( $sections ) ) {
 			$response['content']       = '';
 			$response['atts']['class'] = 'nav-tab-wrapper';
 
-			$tab = $this->_get_current_tab( $sections );
+			$tab = $this->get_current_tab( $sections );
 
 			foreach ( $sections as $key => $value ) {
 				$class = 'nav-tab';
-				if ( $tab == $key ) {
+				if ( $tab === $key ) {
 					$class .= ' nav-tab-active';
 				}
 
