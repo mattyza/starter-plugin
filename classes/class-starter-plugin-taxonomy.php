@@ -79,7 +79,7 @@ class Starter_Plugin_Taxonomy {
 		}
 
 		$this->args = wp_parse_args( $args, $this->get_default_args() );
-	} // End __construct()
+	}
 
 	/**
 	 * Return an array of default arguments.
@@ -93,12 +93,13 @@ class Starter_Plugin_Taxonomy {
 			'public'            => true,
 			'hierarchical'      => true,
 			'show_ui'           => true,
+			'show_in_rest'      => true,
 			'show_admin_column' => true,
 			'query_var'         => true,
 			'show_in_nav_menus' => false,
 			'show_tagcloud'     => false,
 		);
-	} // End _get_default_args()
+	}
 
 	/**
 	 * Return an array of default labels.
@@ -108,19 +109,27 @@ class Starter_Plugin_Taxonomy {
 	 */
 	private function get_default_labels () {
 		return array(
-			'name'              => sprintf( _x( '%s', 'taxonomy general name', 'starter-plugin' ), $this->plural ),
-			'singular_name'     => sprintf( _x( '%s', 'taxonomy singular name', 'starter-plugin' ), $this->singular ),
+			'name'              => $this->plural,
+			'singular_name'     => $this->singular,
+			/* translators: taxonomy name, in plural */
 			'search_items'      => sprintf( __( 'Search %s', 'starter-plugin' ), $this->plural ),
+			/* translators: taxonomy name, in plural */
 			'all_items'         => sprintf( __( 'All %s', 'starter-plugin' ), $this->plural ),
+			/* translators: taxonomy name, in singular */
 			'parent_item'       => sprintf( __( 'Parent %s', 'starter-plugin' ), $this->singular ),
+			/* translators: taxonomy name, in singular */
 			'parent_item_colon' => sprintf( __( 'Parent %s:', 'starter-plugin' ), $this->singular ),
+			/* translators: taxonomy name, in singular */
 			'edit_item'         => sprintf( __( 'Edit %s', 'starter-plugin' ), $this->singular ),
+			/* translators: taxonomy name, in singular */
 			'update_item'       => sprintf( __( 'Update %s', 'starter-plugin' ), $this->singular ),
+			/* translators: taxonomy name, in singular */
 			'add_new_item'      => sprintf( __( 'Add New %s', 'starter-plugin' ), $this->singular ),
+			/* translators: taxonomy name, in singular */
 			'new_item_name'     => sprintf( __( 'New %s Name', 'starter-plugin' ), $this->singular ),
 			'menu_name'         => $this->plural,
 		);
-	} // End _get_default_labels()
+	}
 
 	/**
 	 * Register the taxonomy.
@@ -130,6 +139,6 @@ class Starter_Plugin_Taxonomy {
 	 */
 	public function register () {
 		register_taxonomy( esc_attr( $this->token ), esc_attr( $this->post_type ), (array) $this->args );
-	} // End register()
-} // End Class
+	}
+}
 

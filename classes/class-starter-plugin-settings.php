@@ -43,7 +43,7 @@ final class Starter_Plugin_Settings {
 			self::$instance = new self();
 		}
 		return self::$instance;
-	} // End instance()
+	}
 
 	/**
 	 * Constructor function.
@@ -51,7 +51,7 @@ final class Starter_Plugin_Settings {
 	 * @since   1.0.0
 	 */
 	public function __construct () {
-	} // End __construct()
+	}
 
 	/**
 	 * Validate the settings.
@@ -74,7 +74,7 @@ final class Starter_Plugin_Settings {
 				$method = 'validate_field_' . $fields[ $k ]['type'];
 
 				if ( ! method_exists( $this, $method ) ) {
-					if ( true === (bool) apply_filters( 'starter-plugin-validate-field-' . $fields[ $k ]['type'] . '_use_default', true ) ) {
+					if ( true === (bool) apply_filters( 'starter_plugin_validate_field_' . $fields[ $k ]['type'] . '_use_default', true ) ) {
 						$method = 'validate_field_text';
 					} else {
 						$method = '';
@@ -83,10 +83,10 @@ final class Starter_Plugin_Settings {
 
 				// If we have an internal method for validation, filter and apply it.
 				if ( '' !== $method ) {
-					add_filter( 'starter-plugin-validate-field-' . $fields[ $k ]['type'], array( $this, $method ) );
+					add_filter( 'starter_plugin_validate_field_' . $fields[ $k ]['type'], array( $this, $method ) );
 				}
 
-				$method_output = apply_filters( 'starter-plugin-validate-field-' . $fields[ $k ]['type'], $v, $fields[ $k ] );
+				$method_output = apply_filters( 'starter_plugin_validate_field_' . $fields[ $k ]['type'], $v, $fields[ $k ] );
 
 				if ( ! is_wp_error( $method_output ) ) {
 					$input[ $k ] = $method_output;
@@ -94,7 +94,7 @@ final class Starter_Plugin_Settings {
 			}
 		}
 		return $input;
-	} // End validate_settings()
+	}
 
 	/**
 	 * Validate the given data, assuming it is from a text input field.
@@ -104,7 +104,7 @@ final class Starter_Plugin_Settings {
 	 */
 	public function validate_field_text ( $v ) {
 		return (string) wp_kses_post( $v );
-	} // End validate_field_text()
+	}
 
 	/**
 	 * Validate the given data, assuming it is from a textarea field.
@@ -141,7 +141,7 @@ final class Starter_Plugin_Settings {
 		);
 
 		return wp_kses( $v, $allowed );
-	} // End validate_field_textarea()
+	}
 
 	/**
 	 * Validate the given data, assuming it is from a checkbox input field.
@@ -156,7 +156,7 @@ final class Starter_Plugin_Settings {
 		} else {
 			return 'true';
 		}
-	} // End validate_field_checkbox()
+	}
 
 	/**
 	 * Validate the given data, assuming it is from a URL field.
@@ -167,7 +167,7 @@ final class Starter_Plugin_Settings {
 	 */
 	public function validate_field_url ( $v ) {
 		return trim( esc_url( $v ) );
-	} // End validate_field_url()
+	}
 
 	/**
 	 * Render a field of a given type.
@@ -177,7 +177,6 @@ final class Starter_Plugin_Settings {
 	 * @return  void
 	 */
 	public function render_field ( $args ) {
-		$html = '';
 		if ( ! in_array( $args['type'], $this->get_supported_fields(), true ) ) {
 			return ''; // Supported field type sanity check.
 		}
@@ -194,26 +193,21 @@ final class Starter_Plugin_Settings {
 		}
 
 		// Construct the key.
-		$key           = Starter_Plugin()->token . '-' . $args['section'] . '[' . $args['id'] . ']';
-		$method_output = $this->$method( $key, $args );
+		$key = Starter_Plugin()->token . '-' . $args['section'] . '[' . $args['id'] . ']';
 
-		if ( ! is_wp_error( $method_output ) ) {
-			$html .= $method_output;
-		}
+		echo $this->$method( $key, $args ); /* phpcs:ignore */
 
 		// Output the description, if the current field allows it.
-		if ( isset( $args['type'] ) && ! in_array( $args['type'], (array) apply_filters( 'starter-plugin-no-description-fields', array( 'checkbox' ) ), true ) ) {
+		if ( isset( $args['type'] ) && ! in_array( $args['type'], (array) apply_filters( 'starter_plugin_no_description_fields', array( 'checkbox' ) ), true ) ) {
 			if ( isset( $args['description'] ) ) {
-				$description = '<p class="description">' . wp_kses_post( $args['description'] ) . '</p>' . "\n";
-				if ( in_array( $args['type'], (array) apply_filters( 'starter-plugin-new-line-description-fields', array( 'textarea', 'select' ) ), true ) ) {
+				$description = $args['description'];
+				if ( in_array( $args['type'], (array) apply_filters( 'starter_plugin_new_line_description_fields', array( 'textarea', 'select' ) ), true ) ) {
 					$description = wpautop( $description );
 				}
-				$html .= $description;
+				echo '<p class="description">' . wp_kses_post( $description ) . '</p>';
 			}
 		}
-
-		echo $html;
-	} // End render_field()
+	}
 
 	/**
 	 * Retrieve the settings fields details
@@ -230,8 +224,8 @@ final class Starter_Plugin_Settings {
 		// Admin tabs will be created for each section.
 		// Don't forget to add fields for the section in the get_settings_fields() function below
 
-		return (array) apply_filters( 'starter-plugin-settings-sections', $settings_sections );
-	} // End get_settings_sections()
+		return (array) apply_filters( 'starter_plugin_settings_sections', $settings_sections );
+	}
 
 	/**
 	 * Retrieve the settings fields details
@@ -308,8 +302,8 @@ final class Starter_Plugin_Settings {
 				break;
 		}
 
-		return (array) apply_filters( 'starter-plugin-settings-fields', $settings_fields );
-	} // End get_settings_fields()
+		return (array) apply_filters( 'starter_plugin_settings_fields', $settings_fields );
+	}
 
 	/**
 	 * Render HTML markup for the "text" field type.
@@ -322,7 +316,7 @@ final class Starter_Plugin_Settings {
 	protected function render_field_text ( $key, $args ) {
 		$html = '<input id="' . esc_attr( $key ) . '" name="' . esc_attr( $key ) . '" size="40" type="text" value="' . esc_attr( $this->get_value( $args['id'], $args['default'], $args['section'] ) ) . '" />' . "\n";
 		return $html;
-	} // End render_field_text()
+	}
 
 	/**
 	 * Render HTML markup for the "radio" field type.
@@ -341,7 +335,7 @@ final class Starter_Plugin_Settings {
 			}
 		}
 		return $html;
-	} // End render_field_radio()
+	}
 
 	/**
 	 * Render HTML markup for the "textarea" field type.
@@ -355,7 +349,7 @@ final class Starter_Plugin_Settings {
 		// Explore how best to escape this data, as esc_textarea() strips HTML tags, it seems.
 		$html = '<textarea id="' . esc_attr( $key ) . '" name="' . esc_attr( $key ) . '" cols="42" rows="5">' . $this->get_value( $args['id'], $args['default'], $args['section'] ) . '</textarea>' . "\n";
 		return $html;
-	} // End render_field_textarea()
+	}
 
 	/**
 	 * Render HTML markup for the "checkbox" field type.
@@ -377,7 +371,7 @@ final class Starter_Plugin_Settings {
 			$html .= wp_kses_post( $args['description'] ) . '</label>' . "\n";
 		}
 		return $html;
-	} // End render_field_checkbox()
+	}
 
 	/**
 	 * Render HTML markup for the "select2" field type.
@@ -399,7 +393,7 @@ final class Starter_Plugin_Settings {
 			$html .= '</select>' . "\n";
 		}
 		return $html;
-	} // End render_field_select()
+	}
 
 	/**
 	 * Render HTML markup for the "select_taxonomy" field type.
@@ -444,7 +438,7 @@ final class Starter_Plugin_Settings {
 		$html .= wp_dropdown_categories( $args['options'] );
 
 		return $html;
-	} // End render_field_select_taxonomy()
+	}
 
 	/**
 	 * Return an array of field types expecting an array value returned.
@@ -454,7 +448,7 @@ final class Starter_Plugin_Settings {
 	 */
 	public function get_array_field_types () {
 		return array();
-	} // End get_array_field_types()
+	}
 
 	/**
 	 * Return an array of field types where no label/header is to be displayed.
@@ -464,7 +458,7 @@ final class Starter_Plugin_Settings {
 	 */
 	protected function get_no_label_field_types () {
 		return array( 'info' );
-	} // End get_no_label_field_types()
+	}
 
 	/**
 	 * Return a filtered array of supported field types.
@@ -473,8 +467,8 @@ final class Starter_Plugin_Settings {
 	 * @return  array Supported field type keys.
 	 */
 	public function get_supported_fields () {
-		return (array) apply_filters( 'starter-plugin-supported-fields', array( 'text', 'checkbox', 'radio', 'textarea', 'select', 'select_taxonomy' ) );
-	} // End get_supported_fields()
+		return (array) apply_filters( 'starter_plugin_supported_fields', array( 'text', 'checkbox', 'radio', 'textarea', 'select', 'select_taxonomy' ) );
+	}
 
 	/**
 	 * Return a value, using a desired retrieval method.
@@ -495,7 +489,7 @@ final class Starter_Plugin_Settings {
 		}
 
 		return $response;
-	} // End get_value()
+	}
 
 	/**
 	 * Return all settings keys.
@@ -537,5 +531,5 @@ final class Starter_Plugin_Settings {
 		}
 
 		return $response;
-	} // End get_settings()
-} // End Class
+	}
+}

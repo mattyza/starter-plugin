@@ -40,7 +40,7 @@ final class Starter_Plugin_Admin {
 
 		// Register the settings screen within WordPress.
 		add_action( 'admin_menu', array( $this, 'register_settings_screen' ) );
-	} // End __construct()
+	}
 
 	/**
 	 * Main Starter_Plugin_Admin Instance
@@ -56,7 +56,7 @@ final class Starter_Plugin_Admin {
 			self::$instance = new self();
 		}
 		return self::$instance;
-	} // End instance()
+	}
 
 	/**
 	 * Register the admin screen.
@@ -66,7 +66,7 @@ final class Starter_Plugin_Admin {
 	 */
 	public function register_settings_screen () {
 		$this->hook = add_submenu_page( 'options-general.php', __( 'Starter Plugin Settings', 'starter-plugin' ), __( 'Starter Plugin', 'starter-plugin' ), 'manage_options', 'starter-plugin', array( $this, 'settings_screen' ) );
-	} // End register_settings_screen()
+	}
 
 	/**
 	 * Output the markup for the settings screen.
@@ -92,7 +92,7 @@ final class Starter_Plugin_Admin {
 			</form>
 		</div><!--/.wrap-->
 		<?php
-	} // End settings_screen()
+	}
 
 	/**
 	 * Register the settings within the Settings API.
@@ -108,7 +108,7 @@ final class Starter_Plugin_Admin {
 				add_settings_section( sanitize_title_with_dashes( $k ), $v, array( $this, 'render_settings' ), 'starter-plugin-' . $k, $k, $k );
 			}
 		}
-	} // End register_settings()
+	}
 
 	/**
 	 * Render the settings.
@@ -129,7 +129,7 @@ final class Starter_Plugin_Admin {
 				add_settings_field( $k, $v['name'], array( Starter_Plugin()->settings, 'render_field' ), 'starter-plugin-' . $token, $v['section'], $args );
 			}
 		}
-	} // End render_settings()
+	}
 
 	/**
 	 * Validate the settings.
@@ -142,7 +142,7 @@ final class Starter_Plugin_Admin {
 		$sections = Starter_Plugin()->settings->get_settings_sections();
 		$tab      = $this->_get_current_tab( $sections );
 		return Starter_Plugin()->settings->validate_settings( $input, $tab );
-	} // End validate_settings()
+	}
 
 	/**
 	 * Return marked up HTML for the header tag on the settings screen.
@@ -173,7 +173,7 @@ final class Starter_Plugin_Admin {
 		$response = '<' . esc_attr( $args['tag'] ) . $atts . '>' . $args['content'] . '</' . esc_attr( $args['tag'] ) . '>' . "\n";
 
 		return $response;
-	} // End get_admin_header_html()
+	}
 
 	/**
 	 * Print marked up HTML for the header tag on the settings screen.
@@ -184,7 +184,7 @@ final class Starter_Plugin_Admin {
 	 * @return  string 			 The current tab key.
 	 */
 	public function admin_header_html ( $sections, $title ) {
-		return $this->get_admin_header_html( $sections, $title );
+		echo $this->get_admin_header_html( $sections, $title ); /* phpcs:ignore */
 	}
 
 	/**
@@ -195,19 +195,14 @@ final class Starter_Plugin_Admin {
 	 * @return  string 			 The current tab key.
 	 */
 	private function get_current_tab ( $sections = array() ) {
-		if ( isset( $_GET['tab'] ) ) {
+		$response = key( $sections );
+
+		if ( isset( $_GET['tab'] ) && check_admin_referer( 'starter_plugin_switch_settings_tab', 'starter_plugin_switch_settings_tab' ) ) {
 			$response = sanitize_title_with_dashes( $_GET['tab'] );
-		} else {
-			if ( is_array( $sections ) && ! empty( $sections ) ) {
-				list( $first_section ) = array_keys( $sections );
-				$response              = $first_section;
-			} else {
-				$response = '';
-			}
 		}
 
 		return $response;
-	} // End _get_current_tab()
+	}
 
 	/**
 	 * Return an array of data, used to construct the header tag.
@@ -236,10 +231,10 @@ final class Starter_Plugin_Admin {
 					$class .= ' nav-tab-active';
 				}
 
-				$response['content'] .= '<a href="' . admin_url( 'options-general.php?page=starter-plugin&tab=' . sanitize_title_with_dashes( $key ) ) . '" class="' . esc_attr( $class ) . '">' . esc_html( $value ) . '</a>';
+				$response['content'] .= '<a href="' . wp_nonce_url( admin_url( 'options-general.php?page=starter-plugin&tab=' . sanitize_title_with_dashes( $key ) ), 'starter_plugin_switch_settings_tab', 'starter_plugin_switch_settings_tab' ) . '" class="' . esc_attr( $class ) . '">' . esc_html( $value ) . '</a>';
 			}
 		}
 
-		return (array) apply_filters( 'starter-plugin-get-admin-header-data', $response );
-	} // End _get_admin_header_data()
-} // End Class
+		return (array) apply_filters( 'starter_plugin_get_admin_header_data', $response );
+	}
+}
