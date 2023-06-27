@@ -1,5 +1,7 @@
 <?php
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 
 /**
  * Starter Plugin Post Type Class
@@ -59,32 +61,29 @@ class Starter_Plugin_Post_Type {
 	 * @since 1.0.0
 	 */
 	public function __construct( $post_type = 'thing', $singular = '', $plural = '', $args = array(), $taxonomies = array() ) {
-		$this->post_type = $post_type;
-		$this->singular = $singular;
-		$this->plural = $plural;
-		$this->args = $args;
+		$this->post_type  = $post_type;
+		$this->singular   = $singular;
+		$this->plural     = $plural;
+		$this->args       = $args;
 		$this->taxonomies = $taxonomies;
 
 		add_action( 'init', array( $this, 'register_post_type' ) );
 		add_action( 'init', array( $this, 'register_taxonomy' ) );
 
 		if ( is_admin() ) {
-			global $pagenow;
+			global $pagenow, $wp_query;
 
 			add_action( 'admin_menu', array( $this, 'meta_box_setup' ), 20 );
 			add_action( 'save_post', array( $this, 'meta_box_save' ) );
 			add_filter( 'enter_title_here', array( $this, 'enter_title_here' ) );
 			add_filter( 'post_updated_messages', array( $this, 'updated_messages' ) );
-
-			if ( $pagenow == 'edit.php' && isset( $_GET['post_type'] ) && esc_attr( $_GET['post_type'] ) == $this->post_type ) {
-				add_filter( 'manage_edit-' . $this->post_type . '_columns', array( $this, 'register_custom_column_headings' ), 10, 1 );
-				add_action( 'manage_posts_custom_column', array( $this, 'register_custom_columns' ), 10, 2 );
-			}
+			add_filter( 'manage_edit-' . $this->post_type . '_columns', array( $this, 'register_custom_column_headings' ), 10, 1 );
+			add_action( 'manage_posts_custom_column', array( $this, 'register_custom_columns' ), 10, 2 );
 		}
 
 		add_action( 'after_setup_theme', array( $this, 'ensure_post_thumbnails_support' ) );
 		add_action( 'after_theme_setup', array( $this, 'register_image_sizes' ) );
-	} // End __construct()
+	}
 
 	/**
 	 * Register the post type.
@@ -93,44 +92,48 @@ class Starter_Plugin_Post_Type {
 	 */
 	public function register_post_type () {
 		$labels = array(
-			'name' => sprintf( _x( '%s', 'post type general name', 'starter-plugin' ), $this->plural ),
-			'singular_name' => sprintf( _x( '%s', 'post type singular name', 'starter-plugin' ), $this->singular ),
-			'add_new' => _x( 'Add New', $this->post_type, 'starter-plugin' ),
-			'add_new_item' => sprintf( __( 'Add New %s', 'starter-plugin' ), $this->singular ),
-			'edit_item' => sprintf( __( 'Edit %s', 'starter-plugin' ), $this->singular ),
-			'new_item' => sprintf( __( 'New %s', 'starter-plugin' ), $this->singular ),
-			'all_items' => sprintf( __( 'All %s', 'starter-plugin' ), $this->plural ),
-			'view_item' => sprintf( __( 'View %s', 'starter-plugin' ), $this->singular ),
-			'search_items' => sprintf( __( 'Search %a', 'starter-plugin' ), $this->plural ),
-			'not_found' => sprintf( __( 'No %s Found', 'starter-plugin' ), $this->plural ),
-			'not_found_in_trash' => sprintf( __( 'No %s Found In Trash', 'starter-plugin' ), $this->plural ),
-			'parent_item_colon' => '',
-			'menu_name' => $this->plural,
+			'name'               => $this->plural,
+			'singular_name'      => $this->singular,
+			'add_new'            => _x( 'Add New', 'thing', 'starter-plugin' ), /* translators: add new post */
+			'add_new_item'       => sprintf( __( 'Add New %s', 'starter-plugin' ), $this->singular ), /* translators: 'Add new' label for post type entry */
+			'edit_item'          => sprintf( __( 'Edit %s', 'starter-plugin' ), $this->singular ), /* translators: 'Edit' label for post type entry */
+			'new_item'           => sprintf( __( 'New %s', 'starter-plugin' ), $this->singular ), /* translators: 'New' label for post type entry containing post type singular name */
+			'all_items'          => sprintf( __( 'All %s', 'starter-plugin' ), $this->plural ), /* translators: 'All' label for post type entries */
+			'view_item'          => sprintf( __( 'View %s', 'starter-plugin' ), $this->singular ), /* translators: 'View' label for post type entry containing singular name */
+			'search_items'       => sprintf( __( 'Search %s', 'starter-plugin' ), $this->plural ), /* translators: 'Search' label for post type entry containing plural name */
+			'not_found'          => sprintf( __( 'No %s Found', 'starter-plugin' ), $this->plural ), /* translators: 'Not found' label for post type entry containing plural name */
+			'not_found_in_trash' => sprintf( __( 'No %s Found In Trash', 'starter-plugin' ), $this->plural ), /* translators: 'Not found' label for post type entry containing plural name, looking at trash */
+			'parent_item_colon'  => '',
+			'menu_name'          => $this->plural,
 		);
 
-		$single_slug = apply_filters( 'starter-plugin_single_slug', _x( sanitize_title_with_dashes( $this->singular ), 'single post url slug', 'starter-plugin' ) );
-		$archive_slug = apply_filters( 'starter-plugin_archive_slug', _x( sanitize_title_with_dashes( $this->plural ), 'post archive url slug', 'starter-plugin' ) );
+		$single_slug = sanitize_title_with_dashes( $this->singular );
+		$single_slug = apply_filters( 'starter_plugin_single_slug', $single_slug );
+
+		$archive_slug = sanitize_title_with_dashes( $this->plural );
+		$archive_slug = apply_filters( 'starter_plugin_archive_slug', $archive_slug );
 
 		$defaults = array(
-			'labels' => $labels,
-			'public' => true,
+			'labels'             => $labels,
+			'public'             => true,
 			'publicly_queryable' => true,
-			'show_ui' => true,
-			'show_in_menu' => true,
-			'query_var' => true,
-			'rewrite' => array( 'slug' => $single_slug ),
-			'capability_type' => 'post',
-			'has_archive' => $archive_slug,
-			'hierarchical' => false,
-			'supports' => array( 'title', 'editor', 'excerpt', 'thumbnail', 'page-attributes' ),
-			'menu_position' => 5,
-			'menu_icon' => 'dashicons-smiley',
+			'show_ui'            => true,
+			'show_in_menu'       => true,
+			'show_in_rest'       => true,
+			'query_var'          => true,
+			'rewrite'            => array( 'slug' => $single_slug ),
+			'capability_type'    => 'post',
+			'has_archive'        => $archive_slug,
+			'hierarchical'       => false,
+			'supports'           => array( 'title', 'editor', 'excerpt', 'thumbnail', 'page-attributes' ),
+			'menu_position'      => 5,
+			'menu_icon'          => 'dashicons-smiley',
 		);
 
 		$args = wp_parse_args( $this->args, $defaults );
 
 		register_post_type( $this->post_type, $args );
-	} // End register_post_type()
+	}
 
 	/**
 	 * Register the "thing-category" taxonomy.
@@ -141,7 +144,7 @@ class Starter_Plugin_Post_Type {
 	public function register_taxonomy () {
 		$this->taxonomies['thing-category'] = new Starter_Plugin_Taxonomy(); // Leave arguments empty, to use the default arguments.
 		$this->taxonomies['thing-category']->register();
-	} // End register_taxonomy()
+	}
 
 	/**
 	 * Add custom columns for the "manage" screen of this post type.
@@ -154,15 +157,19 @@ class Starter_Plugin_Post_Type {
 	public function register_custom_columns ( $column_name, $id ) {
 		global $post;
 
+		if ( $post->post_type !== $this->post_type ) {
+			return;
+		}
+
 		switch ( $column_name ) {
 			case 'image':
-				echo $this->get_image( $id, 40 );
-			break;
+				$this->get_image( $id, 40, false );
+				break;
 
 			default:
-			break;
+				break;
 		}
-	} // End register_custom_columns()
+	}
 
 	/**
 	 * Add custom column headings for the "manage" screen of this post type.
@@ -176,7 +183,8 @@ class Starter_Plugin_Post_Type {
 
 		$last_item = array();
 
-		if ( isset( $defaults['date'] ) ) { unset( $defaults['date'] ); }
+		if ( isset( $defaults['date'] ) ) {
+			unset( $defaults['date'] ); }
 
 		if ( count( $defaults ) > 2 ) {
 			$last_item = array_slice( $defaults, -1 );
@@ -187,13 +195,13 @@ class Starter_Plugin_Post_Type {
 
 		if ( is_array( $last_item ) && 0 < count( $last_item ) ) {
 			foreach ( $last_item as $k => $v ) {
-				$defaults[$k] = $v;
+				$defaults[ $k ] = $v;
 				break;
 			}
 		}
 
 		return $defaults;
-	} // End register_custom_column_headings()
+	}
 
 	/**
 	 * Update messages for the post type admin.
@@ -204,25 +212,37 @@ class Starter_Plugin_Post_Type {
 	public function updated_messages ( $messages ) {
 		global $post, $post_ID;
 
-		$messages[$this->post_type] = array(
-			0 => '', // Unused. Messages start at index 1.
-			1 => sprintf( __( '%3$s updated. %sView %4$s%s', 'starter-plugin' ), '<a href="' . esc_url( get_permalink( $post_ID ) ) . '">', '</a>', $this->singular, strtolower( $this->singular ) ),
-			2 => __( 'Custom field updated.', 'starter-plugin' ),
-			3 => __( 'Custom field deleted.', 'starter-plugin' ),
-			4 => sprintf( __( '%s updated.', 'starter-plugin' ), $this->singular ),
+		$messages[ $this->post_type ] = array(
+			0  => '', // Unused. Messages start at index 1.
+			/* translators: 'Updated' notice for post type entry, 1: opening anchor, 2: closing anchor, 3: singular name, 4: lowercase singular name */
+			1  => sprintf( __( '%3$s updated. %1$sView %4$s%2$s', 'starter-plugin' ), '<a href="' . esc_url( get_permalink( $post_ID ) ) . '">', '</a>', $this->singular, strtolower( $this->singular ) ),
+			2  => __( 'Custom field updated.', 'starter-plugin' ),
+			3  => __( 'Custom field deleted.', 'starter-plugin' ),
 			/* translators: %s: date and time of the revision */
-			5 => isset($_GET['revision']) ? sprintf( __( '%s restored to revision from %s', 'starter-plugin' ), $this->singular, wp_post_revision_title( (int) $_GET['revision'], false ) ) : false,
-			6 => sprintf( __( '%1$s published. %3$sView %2$s%4$s', 'starter-plugin' ), $this->singular, strtolower( $this->singular ), '<a href="' . esc_url( get_permalink( $post_ID ) ) . '">', '</a>' ),
-			7 => sprintf( __( '%s saved.', 'starter-plugin' ), $this->singular ),
-			8 => sprintf( __( '%s submitted. %sPreview %s%s', 'starter-plugin' ), $this->singular, strtolower( $this->singular ), '<a target="_blank" href="' . esc_url( add_query_arg( 'preview', 'true', get_permalink( $post_ID ) ) ) . '">', '</a>' ),
-			9 => sprintf( __( '%s scheduled for: %1$s. %2$sPreview %s%3$s', 'starter-plugin' ), $this->singular, strtolower( $this->singular ),
-			// translators: Publish box date format, see http://php.net/date
-			'<strong>' . date_i18n( __( 'M j, Y @ G:i' ), strtotime( $post->post_date ) ) . '</strong>', '<a target="_blank" href="' . esc_url( get_permalink($post_ID) ) . '">', '</a>' ),
-			10 => sprintf( __( '%s draft updated. %sPreview %s%s', 'starter-plugin' ), $this->singular, strtolower( $this->singular ), '<a target="_blank" href="' . esc_url( add_query_arg( 'preview', 'true', get_permalink( $post_ID ) ) ) . '">', '</a>' ),
+			4  => sprintf( __( '%s updated.', 'starter-plugin' ), $this->singular ),
+			/* translators: 1: singular name. 2: Revision post title. */
+			5  => isset( $_GET['revision'] ) ? sprintf( __( '%1$s restored to revision from %2$s', 'starter-plugin' ), $this->singular, wp_post_revision_title( (int) $_GET['revision'], false ) ) : false, /* phpcs:ignore */
+			/* translators: 1: singular name. 2: lowercase singular name. 3: opening anchor. 4: closing anchor. */
+			6  => sprintf( __( '%1$s published. %3$sView %2$s%4$s', 'starter-plugin' ), $this->singular, strtolower( $this->singular ), '<a href="' . esc_url( get_permalink( $post_ID ) ) . '">', '</a>' ),
+			/* translators: 1: singular name. */
+			7  => sprintf( __( '%s saved.', 'starter-plugin' ), $this->singular ),
+			/* translators: 1: singular name. 2: lowercase singular name. 3: opening anchor. 4: closing anchor. */
+			8  => sprintf( __( '%1$s submitted. %2$sPreview %3$s%4$s', 'starter-plugin' ), $this->singular, strtolower( $this->singular ), '<a target="_blank" href="' . esc_url( add_query_arg( 'preview', 'true', get_permalink( $post_ID ) ) ) . '">', '</a>' ),
+			9  => sprintf(
+				/* translators: 1: singular name. 2: lowercase singular name. 3: scheduled date wrapped in "strong" tags. 4: opening anchor. 5: closing anchor. */
+				__( '%1$s scheduled for: %3$s. %4$sPreview %2$s%5$s', 'starter-plugin' ),
+				$this->singular,
+				strtolower( $this->singular ),
+				'<strong>' . date_i18n( __( 'M j, Y @ G:i' ), strtotime( $post->post_date ) ) . '</strong>',
+				'<a target="_blank" href="' . esc_url( get_permalink( $post_ID ) ) . '">',
+				'</a>'
+			),
+			/* translators: 1: singular name. 2: lowercase singular name. 3: opening anchor. 4: closing anchor. */
+			10 => sprintf( __( '%1$s draft updated. %2$sPreview %3$s%4$s', 'starter-plugin' ), $this->singular, strtolower( $this->singular ), '<a target="_blank" href="' . esc_url( add_query_arg( 'preview', 'true', get_permalink( $post_ID ) ) ) . '">', '</a>' ),
 		);
 
 		return $messages;
-	} // End updated_messages()
+	}
 
 	/**
 	 * Setup the meta box.
@@ -231,8 +251,8 @@ class Starter_Plugin_Post_Type {
 	 * @return void
 	 */
 	public function meta_box_setup () {
-		add_meta_box( $this->post_type . '-data', __( 'Thing Details', 'starter-plugin' ), array( $this, 'meta_box_content' ), $this->post_type, 'normal', 'high' );
-	} // End meta_box_setup()
+		add_meta_box( $this->post_type . '-data', __( 'Thing Details', 'starter-plugin' ), array( $this, 'meta_box_content' ), $this->post_type, 'side', 'high' );
+	}
 
 	/**
 	 * The contents of our meta box.
@@ -242,34 +262,27 @@ class Starter_Plugin_Post_Type {
 	 */
 	public function meta_box_content () {
 		global $post_id;
-		$fields = get_post_custom( $post_id );
+		$fields     = get_post_custom( $post_id );
 		$field_data = $this->get_custom_fields_settings();
 
 		$html = '';
 
-		$html .= '<input type="hidden" name="starter-plugin_' . $this->post_type . '_noonce" id="starter-plugin_' . $this->post_type . '_noonce" value="' . wp_create_nonce( plugin_basename( dirname( Starter_Plugin()->plugin_path ) ) ) . '" />';
+		$html .= '<input type="hidden" name="starter_plugin_' . $this->post_type . '_noonce" id="starter-plugin_' . $this->post_type . '_noonce" value="' . wp_create_nonce( plugin_basename( dirname( Starter_Plugin()->plugin_path ) ) ) . '" />';
 
-		if ( 0 < count( $field_data ) ) {
-			$html .= '<table class="form-table">' . "\n";
-			$html .= '<tbody>' . "\n";
-
-			foreach ( $field_data as $k => $v ) {
+		if ( 0 < count( $field_data ) ) :
+			foreach ( $field_data as $k => $v ) :
 				$data = $v['default'];
-				if ( isset( $fields['_' . $k] ) && isset( $fields['_' . $k][0] ) ) {
-					$data = $fields['_' . $k][0];
+				if ( isset( $fields[ '_' . $k ] ) && isset( $fields[ '_' . $k ][0] ) ) {
+					$data = $fields[ '_' . $k ][0];
 				}
-
-				$html .= '<tr valign="top"><th scope="row"><label for="' . esc_attr( $k ) . '">' . $v['name'] . '</label></th><td><input name="' . esc_attr( $k ) . '" type="text" id="' . esc_attr( $k ) . '" class="regular-text" value="' . esc_attr( $data ) . '" />' . "\n";
-				$html .= '<p class="description">' . $v['description'] . '</p>' . "\n";
-				$html .= '</td></tr>' . "\n";
-			}
-
-			$html .= '</tbody>' . "\n";
-			$html .= '</table>' . "\n";
-		}
-
-		echo $html;
-	} // End meta_box_content()
+				?>
+<p><label for="<?php echo esc_attr( $k ); ?>"><?php echo esc_html( $v['name'] ); ?></label></p>
+		<p><input name="<?php echo esc_attr( $k ); ?>" type="text" id="<?php echo esc_attr( $k ); ?>" value="<?php echo esc_attr( $data ); ?>" /></p>
+	<p class="description"><?php echo esc_html( $v['description'] ); ?></p>
+				<?php
+			endforeach;
+		endif;
+	}
 
 	/**
 	 * Save meta box fields.
@@ -282,15 +295,15 @@ class Starter_Plugin_Post_Type {
 		global $post, $messages;
 
 		// Verify
-		if ( get_post_type() != $this->post_type ) {
+		if ( get_post_type() !== $this->post_type ) {
 			return $post_id;
 		}
 
-		if ( ! isset( $_POST['starter-plugin_' . $this->post_type . '_noonce'] ) || ! wp_verify_nonce( $_POST['starter-plugin_' . $this->post_type . '_noonce'], plugin_basename( dirname( Starter_Plugin()->plugin_path ) ) ) ) {
+		if ( ! isset( $_POST[ 'starter_plugin_' . $this->post_type . '_noonce' ] ) || ! wp_verify_nonce( $_POST[ 'starter_plugin_' . $this->post_type . '_noonce' ], plugin_basename( dirname( Starter_Plugin()->plugin_path ) ) ) ) {
 			return $post_id;
 		}
 
-		if ( isset( $_POST['post_type'] ) && 'page' == esc_attr( $_POST['post_type'] ) ) {
+		if ( isset( $_POST['post_type'] ) && 'page' === esc_attr( $_POST['post_type'] ) ) {
 			if ( ! current_user_can( 'edit_page', $post_id ) ) {
 				return $post_id;
 			}
@@ -301,26 +314,26 @@ class Starter_Plugin_Post_Type {
 		}
 
 		$field_data = $this->get_custom_fields_settings();
-		$fields = array_keys( $field_data );
+		$fields     = array_keys( $field_data );
 
 		foreach ( $fields as $f ) {
 
-			${$f} = strip_tags(trim($_POST[$f]));
+			${$f} = wp_strip_all_tags( trim( $_POST[ $f ] ) );
 
 			// Escape the URLs.
-			if ( 'url' == $field_data[$f]['type'] ) {
+			if ( 'url' === $field_data[ $f ]['type'] ) {
 				${$f} = esc_url( ${$f} );
 			}
 
-			if ( get_post_meta( $post_id, '_' . $f ) == '' ) {
+			if ( '' === get_post_meta( $post_id, '_' . $f ) ) {
 				add_post_meta( $post_id, '_' . $f, ${$f}, true );
-			} elseif( ${$f} != get_post_meta( $post_id, '_' . $f, true ) ) {
+			} elseif ( get_post_meta( $post_id, '_' . $f, true ) !== ${$f} ) {
 				update_post_meta( $post_id, '_' . $f, ${$f} );
-			} elseif ( ${$f} == '' ) {
+			} elseif ( '' === ${$f} ) {
 				delete_post_meta( $post_id, '_' . $f, get_post_meta( $post_id, '_' . $f, true ) );
 			}
 		}
-	} // End meta_box_save()
+	}
 
 	/**
 	 * Customise the "Enter title here" text.
@@ -330,11 +343,11 @@ class Starter_Plugin_Post_Type {
 	 * @return void
 	 */
 	public function enter_title_here ( $title ) {
-		if ( get_post_type() == $this->post_type ) {
+		if ( get_post_type() === $this->post_type ) {
 			$title = __( 'Enter the thing title here', 'starter-plugin' );
 		}
 		return $title;
-	} // End enter_title_here()
+	}
 
 	/**
 	 * Get the settings for the custom fields.
@@ -346,24 +359,25 @@ class Starter_Plugin_Post_Type {
 		$fields = array();
 
 		$fields['url'] = array(
-		    'name' => __( 'URL', 'starter-plugin' ),
-		    'description' => __( 'Enter a URL that applies to this thing (for example: http://domain.com/).', 'starter-plugin' ),
-		    'type' => 'url',
-		    'default' => '',
-		    'section' => 'info'
+			'name'        => __( 'URL', 'starter-plugin' ),
+			'description' => __( 'Enter a URL that applies to this thing (for example: http://domain.com/).', 'starter-plugin' ),
+			'type'        => 'url',
+			'default'     => '',
+			'section'     => 'info',
 		);
 
-		return apply_filters( 'starter-plugin_custom_fields_settings', $fields );
-	} // End get_custom_fields_settings()
+		return apply_filters( 'starter_plugin_custom_fields_settings', $fields );
+	}
 
 	/**
 	 * Get the image for the given ID.
 	 * @param  int 				$id   Post ID.
-	 * @param  mixed $size Image dimension. (default: "thing-thumbnail")
+	 * @param  mixed 			$size Image dimension. (default: "thumbnail")
+	 * @param  boolean 			$return Whether to return the result, or to output to the browser. Default: return.
 	 * @since  1.0.0
 	 * @return string       	<img> tag.
 	 */
-	protected function get_image ( $id, $size = 'thing-thumbnail' ) {
+	protected function get_image ( $id, $size = 'thumbnail', $return = true ) {
 		$response = '';
 
 		if ( has_post_thumbnail( $id ) ) {
@@ -376,8 +390,12 @@ class Starter_Plugin_Post_Type {
 			$response = get_the_post_thumbnail( intval( $id ), $size );
 		}
 
-		return $response;
-	} // End get_image()
+		if ( true === $return ) {
+			return $response;
+		} else {
+			echo $response; /* phpcs:ignore */
+		}
+	}
 
 	/**
 	 * Register image sizes.
@@ -388,7 +406,7 @@ class Starter_Plugin_Post_Type {
 		if ( function_exists( 'add_image_size' ) ) {
 			add_image_size( $this->post_type . '-thumbnail', 150, 9999 ); // 150 pixels wide (and unlimited height)
 		}
-	} // End register_image_sizes()
+	}
 
 	/**
 	 * Run on activation.
@@ -397,7 +415,7 @@ class Starter_Plugin_Post_Type {
 	 */
 	public function activation () {
 		$this->flush_rewrite_rules();
-	} // End activation()
+	}
 
 	/**
 	 * Flush the rewrite rules
@@ -407,7 +425,7 @@ class Starter_Plugin_Post_Type {
 	private function flush_rewrite_rules () {
 		$this->register_post_type();
 		flush_rewrite_rules();
-	} // End flush_rewrite_rules()
+	}
 
 	/**
 	 * Ensure that "post-thumbnails" support is available for those themes that don't register it.
@@ -415,6 +433,7 @@ class Starter_Plugin_Post_Type {
 	 * @since  1.0.0
 	 */
 	public function ensure_post_thumbnails_support () {
-		if ( ! current_theme_supports( 'post-thumbnails' ) ) { add_theme_support( 'post-thumbnails' ); }
-	} // End ensure_post_thumbnails_support()
-} // End Class
+		if ( ! current_theme_supports( 'post-thumbnails' ) ) {
+			add_theme_support( 'post-thumbnails' ); }
+	}
+}
