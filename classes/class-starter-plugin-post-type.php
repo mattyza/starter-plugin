@@ -93,6 +93,7 @@ class Starter_Plugin_Post_Type {
 	 */
 	public function register_post_type () {
 		$labels = array(
+<<<<<<< Updated upstream
 			'name' => sprintf( _x( '%s', 'post type general name', 'starter-plugin' ), $this->plural ),
 			'singular_name' => sprintf( _x( '%s', 'post type singular name', 'starter-plugin' ), $this->singular ),
 			'add_new' => _x( 'Add New', $this->post_type, 'starter-plugin' ),
@@ -106,6 +107,21 @@ class Starter_Plugin_Post_Type {
 			'not_found_in_trash' => sprintf( __( 'No %s Found In Trash', 'starter-plugin' ), $this->plural ),
 			'parent_item_colon' => '',
 			'menu_name' => $this->plural,
+=======
+			'name'               => $this->plural,
+			'singular_name'      => $this->singular,
+			'add_new'            => sprintf( __( 'Add New %s', 'starter-plugin' ), $this->singular ), /* translators: 'Add new' label for post type menu */
+			'add_new_item'       => sprintf( __( 'Add New %s', 'starter-plugin' ), $this->singular ), /* translators: 'Add new' label for post type entry */
+			'edit_item'          => sprintf( __( 'Edit %s', 'starter-plugin' ), $this->singular ), /* translators: 'Edit' label for post type entry */
+			'new_item'           => sprintf( __( 'New %s', 'starter-plugin' ), $this->singular ), /* translators: 'New' label for post type entry containing post type singular name */
+			'all_items'          => sprintf( __( 'All %s', 'starter-plugin' ), $this->plural ), /* translators: 'All' label for post type entries */
+			'view_item'          => sprintf( __( 'View %s', 'starter-plugin' ), $this->singular ), /* translators: 'View' label for post type entry containing singular name */
+			'search_items'       => sprintf( __( 'Search %s', 'starter-plugin' ), $this->plural ), /* translators: 'Search' label for post type entry containing plural name */
+			'not_found'          => sprintf( __( 'No %s Found', 'starter-plugin' ), $this->plural ), /* translators: 'Not found' label for post type entry containing plural name */
+			'not_found_in_trash' => sprintf( __( 'No %s Found In Trash', 'starter-plugin' ), $this->plural ), /* translators: 'Not found' label for post type entry containing plural name, looking at trash */
+			'parent_item_colon'  => '',
+			'menu_name'          => $this->plural,
+>>>>>>> Stashed changes
 		);
 
 		$single_slug = apply_filters( 'starter-plugin_single_slug', _x( sanitize_title_with_dashes( $this->singular ), 'single post url slug', 'starter-plugin' ) );

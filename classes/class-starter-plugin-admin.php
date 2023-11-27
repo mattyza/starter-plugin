@@ -147,9 +147,12 @@ final class Starter_Plugin_Admin {
 	 * @since   1.0.0
 	 * @param   array  $sections Sections to scan through.
 	 * @param   string $title    Title to use, if only one section is present.
+	 * @param   boolean $show_header_above_tabs Whether or not to show a header above the tabs.
 	 * @return  string 			 The current tab key.
 	 */
-	public function get_admin_header_html ( $sections, $title ) {
+	public function get_admin_header_html ( $sections, $title, $show_header_above_tabs = true ) {
+		$response = '';
+
 		$defaults = array(
 							'tag' => 'h2',
 							'atts' => array( 'class' => 'starter-plugin-wrapper' ),
@@ -167,7 +170,11 @@ final class Starter_Plugin_Admin {
 			}
 		}
 
-		$response = '<' . esc_attr( $args['tag'] ) . $atts . '>' . $args['content'] . '</' . esc_attr( $args['tag'] ) . '>' . "\n";
+		if ( true === $show_header_above_tabs ) {
+			$response .= '<h1>' . __( 'Starter Plugin Settings', 'starter-plugin' ) . '</h1>';
+		}
+
+		$response .= '<' . esc_attr( $args['tag'] ) . $atts . '>' . $args['content'] . '</' . esc_attr( $args['tag'] ) . '>' . "\n";
 
 		return $response;
 	} // End get_admin_header_html()
