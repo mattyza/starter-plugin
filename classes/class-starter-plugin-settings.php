@@ -334,7 +334,7 @@ final class Starter_Plugin_Settings {
 		if ( isset( $args['options'] ) && ( 0 < count( (array)$args['options'] ) ) ) {
 			$html = '';
 			foreach ( $args['options'] as $k => $v ) {
-				$html .= '<input type="radio" name="' . esc_attr( $key ) . '" value="' . esc_attr( $k ) . '"' . checked( esc_attr( $this->get_value( $args['id'], $args['default'], $args['section'] ) ), $k, false ) . ' /> ' . esc_html( $v ) . '<br />' . "\n";
+				$html .= '<p><label><input type="radio" name="' . esc_attr( $key ) . '" value="' . esc_attr( $k ) . '"' . checked( esc_attr( $this->get_value( $args['id'], $args['default'], $args['section'] ) ), $k, false ) . ' /> ' . esc_html( $v ) . '</label></p>' . "\n";
 			}
 		}
 		return $html;
