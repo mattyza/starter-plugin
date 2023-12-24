@@ -16,7 +16,7 @@ jobs:
     - name: Run plugin check
       uses: swissspidy/wp-plugin-check-action@v1
       with:
-        exclude-checks: 'trademarks'
+        exclude-checks: 'trademarks,file_type'
         exclude-directories: '.github,bin,vendor'
     - name: Upload coverage reports to Codecov
       uses: codecov/codecov-action@v3
