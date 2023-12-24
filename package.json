@@ -1,0 +1,6 @@
+{
+    "scripts": {
+        "composer": "wp-env run cli --env-cwd=wp-content/plugins/starter-plugin composer",
+        "test:unit": "wp-env run tests-cli phpunit"
+    }
+}
