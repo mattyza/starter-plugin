@@ -9,7 +9,7 @@ jobs:
         with:
           core: 'WordPress/WordPress'
           phpVersion: '8.2'
-          plugins: '[.]'
+          plugins: '["."]'
       - name: Checkout
         uses: actions/checkout@v4
       - name: Install dependencies
