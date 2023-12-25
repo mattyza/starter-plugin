@@ -1,6 +1,6 @@
 <?php
 /**
- * Class SampleTest
+ * Class Test_Starter_Plugin
  *
  * @package Starter_Plugin
  */
@@ -8,12 +8,12 @@
 /**
  * Sample test case.
  */
-class SampleTest extends WP_UnitTestCase {
+class Test_Starter_Plugin extends WP_UnitTestCase {
 
 	/**
 	 * A single example test.
 	 */
-	public function test_sample() {
+	public function test_starter_plugin() {
 		// Replace this with some actual testing code.
 		$this->assertTrue( true );
 	}
