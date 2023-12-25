@@ -79,6 +79,8 @@ class Starter_Plugin_Taxonomy {
 		}
 
 		$this->args = wp_parse_args( $args, $this->get_default_args() );
+
+		add_action( 'init', array( $this, 'register' ) );
 	}
 
 	/**

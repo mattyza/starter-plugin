@@ -75,6 +75,14 @@ final class Starter_Plugin {
 	 * @since   1.0.0
 	 */
 	public $post_types = array();
+
+	/**
+	 * The taxonomies we're registering.
+	 * @var     array
+	 * @access  public
+	 * @since   1.0.0
+	 */
+	public $taxonomies = array();
 	// Post Types - End
 	/**
 	 * Constructor function.
@@ -103,6 +111,9 @@ final class Starter_Plugin {
 
 		// Register an example post type. To register other post types, duplicate this line.
 		$this->post_types['thing'] = new Starter_Plugin_Post_Type( 'thing', __( 'Thing', 'starter-plugin' ), __( 'Things', 'starter-plugin' ), array( 'menu_icon' => 'dashicons-carrot' ) );
+
+		// Register an example taxonomy, connected to our post type. To register other taxonomies, duplicate this line.
+		$this->taxonomies['thing-category'] = new Starter_Plugin_Taxonomy();
 		// Post Types - End
 		register_activation_hook( __FILE__, array( $this, 'install' ) );
 

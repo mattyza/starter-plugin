@@ -48,27 +48,17 @@ class Starter_Plugin_Post_Type {
 	public $args;
 
 	/**
-	 * The taxonomies for this post type.
-	 * @access public
-	 * @since  1.0.0
-	 * @var    array
-	 */
-	public $taxonomies;
-
-	/**
 	 * Constructor function.
 	 * @access public
 	 * @since 1.0.0
 	 */
-	public function __construct( $post_type = 'thing', $singular = '', $plural = '', $args = array(), $taxonomies = array() ) {
+	public function __construct( $post_type = 'thing', $singular = '', $plural = '', $args = array() ) {
 		$this->post_type  = $post_type;
 		$this->singular   = $singular;
 		$this->plural     = $plural;
 		$this->args       = $args;
-		$this->taxonomies = $taxonomies;
 
 		add_action( 'init', array( $this, 'register_post_type' ) );
-		add_action( 'init', array( $this, 'register_taxonomy' ) );
 
 		if ( is_admin() ) {
 			global $pagenow, $wp_query;
@@ -133,17 +123,6 @@ class Starter_Plugin_Post_Type {
 		$args = wp_parse_args( $this->args, $defaults );
 
 		register_post_type( $this->post_type, $args );
-	}
-
-	/**
-	 * Register the "thing-category" taxonomy.
-	 * @access public
-	 * @since  1.3.0
-	 * @return void
-	 */
-	public function register_taxonomy () {
-		$this->taxonomies['thing-category'] = new Starter_Plugin_Taxonomy(); // Leave arguments empty, to use the default arguments.
-		$this->taxonomies['thing-category']->register();
 	}
 
 	/**
