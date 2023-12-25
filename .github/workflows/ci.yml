@@ -4,12 +4,14 @@ jobs:
   run:
     runs-on: ubuntu-latest
     steps:
+      - name: Start wp-env
+        uses: godaddy-wordpress/setup-wp-env@v1
+        with:
+          core: 'WordPress/WordPress'
+          phpVersion: '8.2'
+          plugins: '["."]'
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Set up php 8.2
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: '8.2'
       - name: Install dependencies
         run: composer self-update && composer install && composer dump-autoload
       - name: Run tests and collect coverage
