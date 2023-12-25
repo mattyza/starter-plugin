@@ -10,7 +10,7 @@
   </php>
   <testsuites>
     <testsuite name="default">
-      <directory prefix="test_" suffix=".php">tests/</directory>
+      <directory prefix="test-" suffix=".php">tests/</directory>
     </testsuite>
   </testsuites>
 </phpunit>
