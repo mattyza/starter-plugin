@@ -1,0 +1,11 @@
+{
+    "scripts": {
+        "wp-env": "wp-env",
+        "composer": "wp-env run cli --env-cwd=wp-content/plugins/starter-plugin composer",
+        "composer:tests-cli": "wp-env run tests-cli --env-cwd=wp-content/plugins/starter-plugin composer",
+        "test:unit": "wp-env run tests-cli --env-cwd=wp-content/plugins/starter-plugin ./vendor/bin/phpunit"
+    },
+    "devDependencies": {
+        "@wordpress/env": "^9.0.0"
+    }
+}
