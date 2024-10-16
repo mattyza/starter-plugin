@@ -198,7 +198,7 @@ final class Starter_Plugin_Admin {
 		$response = key( $sections );
 
 		if ( isset( $_GET['tab'] ) && check_admin_referer( 'starter_plugin_switch_settings_tab', 'starter_plugin_switch_settings_tab' ) ) {
-			$response = sanitize_title_with_dashes( $_GET['tab'] );
+			$response = sanitize_title_with_dashes( wp_unslash( $_GET['tab'] ) );
 		}
 
 		return $response;
