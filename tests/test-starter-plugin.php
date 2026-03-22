@@ -52,4 +52,63 @@ class Test_Starter_Plugin extends WP_UnitTestCase {
 		
 		$this->assertTrue( $has_load_plugin_textdomain );
 	}
+
+	/**
+	 * register_post_meta_fields() should register each field via register_post_meta()
+	 * with show_in_rest enabled so the block editor can read and write the values.
+	 */
+	public function test_post_meta_fields_registered_in_rest() {
+		$post_type_obj = $this->starter_plugin->post_types['thing'];
+		$post_type_obj->register_post_meta_fields();
+
+		$registered = get_registered_meta_keys( 'post', 'thing' );
+
+		$this->assertArrayHasKey( '_url', $registered );
+		$this->assertTrue( $registered['_url']['show_in_rest'] );
+	}
+
+	/**
+	 * get_field_sections() should return an array that includes the 'info' section.
+	 */
+	public function test_get_field_sections_has_info_section() {
+		$post_type_obj = $this->starter_plugin->post_types['thing'];
+		$sections      = $post_type_obj->get_field_sections();
+
+		$this->assertIsArray( $sections );
+		$this->assertArrayHasKey( 'info', $sections );
+	}
+
+	/**
+	 * The 'starter_plugin_field_sections' filter should allow external code
+	 * to add or modify sections.
+	 */
+	public function test_get_field_sections_is_filterable() {
+		add_filter(
+			'starter_plugin_field_sections',
+			function( $sections ) {
+				$sections['extra'] = 'Extra';
+				return $sections;
+			}
+		);
+
+		$post_type_obj = $this->starter_plugin->post_types['thing'];
+		$sections      = $post_type_obj->get_field_sections();
+
+		$this->assertArrayHasKey( 'extra', $sections );
+
+		// Clean up.
+		remove_all_filters( 'starter_plugin_field_sections' );
+	}
+
+	/**
+	 * The init action should include a callback for register_post_meta_fields()
+	 * so that meta registration runs at the correct hook.
+	 */
+	public function test_register_post_meta_fields_hooked_on_init() {
+		$post_type_obj = $this->starter_plugin->post_types['thing'];
+		$priority      = has_action( 'init', array( $post_type_obj, 'register_post_meta_fields' ) );
+
+		$this->assertIsInt( $priority );
+	}
 }
+
