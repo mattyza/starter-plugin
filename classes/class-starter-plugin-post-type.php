@@ -345,8 +345,8 @@ class Starter_Plugin_Post_Type {
 					'type'              => 'string',
 					'default'           => isset( $field['default'] ) ? $field['default'] : '',
 					'sanitize_callback' => ( 'url' === $type ) ? 'esc_url_raw' : 'sanitize_text_field',
-					'auth_callback'     => function () {
-						return current_user_can( 'edit_posts' );
+					'auth_callback'     => function ( $allowed, $meta_key, $post_id ) {
+						return current_user_can( 'edit_post', $post_id );
 					},
 				)
 			);
@@ -357,8 +357,7 @@ class Starter_Plugin_Post_Type {
 	 * Get the section labels for the custom fields.
 	 *
 	 * Each key matches the 'section' value used in get_custom_fields_settings().
-	 * The value is the human-readable panel title shown in the block editor sidebar
-	 * (and as the meta box title in the classic editor).
+	 * The value is the human-readable panel title shown in the block editor sidebar.
 	 *
 	 * @access public
 	 * @since  1.0.0
@@ -428,7 +427,7 @@ class Starter_Plugin_Post_Type {
 
 		wp_enqueue_script(
 			$handle,
-			Starter_Plugin()->plugin_url . 'assets/js/meta-fields.js',
+			plugins_url( '../assets/js/meta-fields.js', __FILE__ ),
 			array( 'wp-plugins', 'wp-edit-post', 'wp-element', 'wp-components', 'wp-data' ),
 			Starter_Plugin()->version,
 			true
