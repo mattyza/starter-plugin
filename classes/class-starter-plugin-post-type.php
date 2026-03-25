@@ -59,14 +59,23 @@ class Starter_Plugin_Post_Type {
 		$this->args       = $args;
 
 		add_action( 'init', array( $this, 'register_post_type' ) );
-		add_action( 'init', array( $this, 'register_post_meta_fields' ) );
+
+		// Delegate meta field registration and block editor sidebar to the dedicated class.
+		new Starter_Plugin_Post_Type_Meta_Fields(
+			$post_type,
+			array( $this, 'get_custom_fields_settings' ),
+			array( $this, 'get_field_sections' )
+		);
+
+		// Always wire up the meta box class — it guards itself inside setup() once init has run.
+		if ( is_admin() ) {
+			new Starter_Plugin_Post_Type_Meta_Box(
+				$post_type,
+				array( $this, 'get_custom_fields_settings' )
+			);
+		}
 
 		if ( is_admin() ) {
-			global $pagenow, $wp_query;
-
-			add_action( 'admin_menu', array( $this, 'meta_box_setup' ), 20 );
-			add_action( 'save_post', array( $this, 'meta_box_save' ) );
-			add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_block_editor_assets' ) );
 			add_filter( 'enter_title_here', array( $this, 'enter_title_here' ) );
 			add_filter( 'post_updated_messages', array( $this, 'updated_messages' ) );
 			add_filter( 'manage_edit-' . $this->post_type . '_columns', array( $this, 'register_custom_column_headings' ), 10, 1 );
@@ -117,7 +126,7 @@ class Starter_Plugin_Post_Type {
 			'capability_type'    => 'post',
 			'has_archive'        => $archive_slug,
 			'hierarchical'       => false,
-			'supports'           => array( 'title', 'editor', 'excerpt', 'thumbnail', 'page-attributes' ),
+			'supports'           => array( 'title', 'editor', 'excerpt', 'thumbnail', 'page-attributes', 'custom-fields' ),
 			'menu_position'      => 5,
 			'menu_icon'          => 'dashicons-smiley',
 		);
@@ -226,152 +235,6 @@ class Starter_Plugin_Post_Type {
 	}
 
 	/**
-	 * Setup the meta box.
-	 * @access public
-	 * @since  1.0.0
-	 * @return void
-	 */
-	public function meta_box_setup () {
-		if ( $this->is_block_editor_active() ) {
-			return;
-		}
-		add_meta_box( $this->post_type . '-data', __( 'Thing Details', 'starter-plugin' ), array( $this, 'meta_box_content' ), $this->post_type, 'side', 'high' );
-	}
-
-	/**
-	 * The contents of our meta box.
-	 * @access public
-	 * @since  1.0.0
-	 * @return void
-	 */
-	public function meta_box_content () {
-		global $post_id;
-		$fields     = get_post_custom( $post_id );
-		$field_data = $this->get_custom_fields_settings();
-
-		$html = '';
-
-		$html .= '<input type="hidden" name="starter_plugin_' . $this->post_type . '_noonce" id="starter-plugin_' . $this->post_type . '_noonce" value="' . wp_create_nonce( plugin_basename( dirname( Starter_Plugin()->plugin_path ) ) ) . '" />';
-
-		if ( 0 < count( $field_data ) ) :
-			foreach ( $field_data as $k => $v ) :
-				$data = $v['default'];
-				if ( isset( $fields[ '_' . $k ] ) && isset( $fields[ '_' . $k ][0] ) ) {
-					$data = $fields[ '_' . $k ][0];
-				}
-				?>
-<p><label for="<?php echo esc_attr( $k ); ?>"><?php echo esc_html( $v['name'] ); ?></label></p>
-		<p><input name="<?php echo esc_attr( $k ); ?>" type="text" id="<?php echo esc_attr( $k ); ?>" value="<?php echo esc_attr( $data ); ?>" /></p>
-	<p class="description"><?php echo esc_html( $v['description'] ); ?></p>
-				<?php
-			endforeach;
-		endif;
-	}
-
-	/**
-	 * Save meta box fields.
-	 * @access public
-	 * @since  1.0.0
-	 * @param int $post_id
-	 * @return int $post_id
-	 */
-	public function meta_box_save ( $post_id ) {
-		global $post, $messages;
-
-		// Verify
-		if ( get_post_type() !== $this->post_type ) {
-			return $post_id;
-		}
-
-		if ( ! isset( $_POST[ 'starter_plugin_' . $this->post_type . '_noonce' ] ) || ! wp_verify_nonce( $_POST[ 'starter_plugin_' . $this->post_type . '_noonce' ], plugin_basename( dirname( Starter_Plugin()->plugin_path ) ) ) ) {
-			return $post_id;
-		}
-
-		if ( isset( $_POST['post_type'] ) && 'page' === esc_attr( $_POST['post_type'] ) ) {
-			if ( ! current_user_can( 'edit_page', $post_id ) ) {
-				return $post_id;
-			}
-		} else {
-			if ( ! current_user_can( 'edit_post', $post_id ) ) {
-				return $post_id;
-			}
-		}
-
-		$field_data = $this->get_custom_fields_settings();
-		$fields     = array_keys( $field_data );
-
-		foreach ( $fields as $f ) {
-
-			${$f} = wp_strip_all_tags( trim( $_POST[ $f ] ) );
-
-			// Escape the URLs.
-			if ( 'url' === $field_data[ $f ]['type'] ) {
-				${$f} = esc_url( ${$f} );
-			}
-
-			if ( '' === get_post_meta( $post_id, '_' . $f ) ) {
-				add_post_meta( $post_id, '_' . $f, ${$f}, true );
-			} elseif ( get_post_meta( $post_id, '_' . $f, true ) !== ${$f} ) {
-				update_post_meta( $post_id, '_' . $f, ${$f} );
-			} elseif ( '' === ${$f} ) {
-				delete_post_meta( $post_id, '_' . $f, get_post_meta( $post_id, '_' . $f, true ) );
-			}
-		}
-	}
-
-	/**
-	 * Register post meta fields for REST API access and block editor support.
-	 *
-	 * Iterates over the field definitions returned by get_custom_fields_settings()
-	 * and calls register_post_meta() for each one so that field values are
-	 * readable and writable through the REST API (and therefore by the block editor).
-	 *
-	 * @access public
-	 * @since  1.0.0
-	 * @return void
-	 */
-	public function register_post_meta_fields() {
-		$fields = $this->get_custom_fields_settings();
-
-		foreach ( $fields as $key => $field ) {
-			$type = isset( $field['type'] ) ? $field['type'] : 'text';
-
-			register_post_meta(
-				$this->post_type,
-				'_' . $key,
-				array(
-					'show_in_rest'      => true,
-					'single'            => true,
-					'type'              => 'string',
-					'default'           => isset( $field['default'] ) ? $field['default'] : '',
-					'sanitize_callback' => ( 'url' === $type ) ? 'esc_url_raw' : 'sanitize_text_field',
-					'auth_callback'     => function ( $allowed, $meta_key, $post_id ) {
-						return current_user_can( 'edit_post', $post_id );
-					},
-				)
-			);
-		}
-	}
-
-	/**
-	 * Get the section labels for the custom fields.
-	 *
-	 * Each key matches the 'section' value used in get_custom_fields_settings().
-	 * The value is the human-readable panel title shown in the block editor sidebar.
-	 *
-	 * @access public
-	 * @since  1.0.0
-	 * @return array
-	 */
-	public function get_field_sections() {
-		$sections = array(
-			'info' => __( 'Details', 'starter-plugin' ),
-		);
-
-		return apply_filters( 'starter_plugin_field_sections', $sections );
-	}
-
-	/**
 	 * Whether the block editor is active for this post type.
 	 *
 	 * Returns true when Gutenberg (the block editor) handles editing for this
@@ -391,57 +254,21 @@ class Starter_Plugin_Post_Type {
 	}
 
 	/**
-	 * Enqueue block editor assets for the meta fields sidebar panels.
+	 * Get the section labels for the custom fields.
 	 *
-	 * Runs only on the block editor screen for this post type. Enqueues the
-	 * meta-fields JS and passes the field + section definitions as localised
-	 * data so the script can build the correct sidebar panels without any
-	 * hard-coded field knowledge.
+	 * Each key matches the 'section' value used in get_custom_fields_settings().
+	 * The value is the human-readable panel title shown in the block editor sidebar.
 	 *
 	 * @access public
 	 * @since  1.0.0
-	 * @return void
+	 * @return array
 	 */
-	public function enqueue_block_editor_assets() {
-		$screen = get_current_screen();
-		if ( ! $screen || $screen->post_type !== $this->post_type ) {
-			return;
-		}
-
-		$field_data  = $this->get_custom_fields_settings();
-		$sections    = $this->get_field_sections();
-		$fields_json = array();
-
-		foreach ( $field_data as $key => $field ) {
-			$fields_json[] = array(
-				'key'         => $key,
-				'name'        => isset( $field['name'] ) ? $field['name'] : $key,
-				'description' => isset( $field['description'] ) ? $field['description'] : '',
-				'type'        => isset( $field['type'] ) ? $field['type'] : 'text',
-				'default'     => isset( $field['default'] ) ? $field['default'] : '',
-				'section'     => isset( $field['section'] ) ? $field['section'] : 'default',
-			);
-		}
-
-		$handle = 'starter-plugin-' . $this->post_type . '-meta-fields';
-
-		wp_enqueue_script(
-			$handle,
-			plugins_url( '../assets/js/meta-fields.js', __FILE__ ),
-			array( 'wp-plugins', 'wp-edit-post', 'wp-element', 'wp-components', 'wp-data' ),
-			Starter_Plugin()->version,
-			true
+	public function get_field_sections() {
+		$sections = array(
+			'info' => __( 'Details', 'starter-plugin' ),
 		);
 
-		wp_localize_script(
-			$handle,
-			'starterPluginMetaFields',
-			array(
-				'fields'   => $fields_json,
-				'sections' => $sections,
-				'postType' => $this->post_type,
-			)
-		);
+		return apply_filters( 'starter_plugin_field_sections', $sections );
 	}
 
 	/**

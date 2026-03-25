@@ -18,15 +18,13 @@
 		return;
 	}
 
-	var el                       = wp.element.createElement;
-	var Fragment                 = wp.element.Fragment;
-	var registerPlugin           = wp.plugins.registerPlugin;
-	var PluginDocumentSettingPanel =
-		( wp.editor  && wp.editor.PluginDocumentSettingPanel ) ||
-		( wp.editPost && wp.editPost.PluginDocumentSettingPanel );
-	var TextControl              = wp.components.TextControl;
-	var useSelect                = wp.data.useSelect;
-	var useDispatch              = wp.data.useDispatch;
+	var el                         = wp.element.createElement;
+	var Fragment                   = wp.element.Fragment;
+	var registerPlugin             = wp.plugins.registerPlugin;
+	var PluginDocumentSettingPanel = wp.editor.PluginDocumentSettingPanel;
+	var TextControl                = wp.components.TextControl;
+	var useSelect                  = wp.data.useSelect;
+	var useDispatch                = wp.data.useDispatch;
 
 	if ( ! PluginDocumentSettingPanel ) {
 		return;
@@ -54,12 +52,12 @@
 	function MetaFieldsPanels() {
 		var meta = useSelect( function ( select ) {
 			return select( 'core/editor' ).getEditedPostAttribute( 'meta' ) || {};
-		}, [] );
+		} );
 
 		var { editPost } = useDispatch( 'core/editor' );
 
 		function handleChange( metaKey, value ) {
-			var update     = {};
+			var update        = {};
 			update[ metaKey ] = value;
 			editPost( { meta: update } );
 		}

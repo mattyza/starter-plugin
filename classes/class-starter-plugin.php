@@ -106,6 +106,8 @@ final class Starter_Plugin {
 		// Admin - End
 
 		// Post Types - Start
+		require_once 'class-starter-plugin-post-type-meta-fields.php';
+		require_once 'class-starter-plugin-post-type-meta-box.php';
 		require_once 'class-starter-plugin-post-type.php';
 		require_once 'class-starter-plugin-taxonomy.php';
 
