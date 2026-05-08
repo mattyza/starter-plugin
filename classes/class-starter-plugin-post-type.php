@@ -278,11 +278,11 @@ class Starter_Plugin_Post_Type {
 			return $post_id;
 		}
 
-		if ( ! isset( $_POST[ 'starter_plugin_' . $this->post_type . '_noonce' ] ) || ! wp_verify_nonce( $_POST[ 'starter_plugin_' . $this->post_type . '_noonce' ], plugin_basename( dirname( Starter_Plugin()->plugin_path ) ) ) ) {
+		if ( ! isset( $_POST[ 'starter_plugin_' . wp_unslash( $this->post_type ) . '_noonce' ] ) || ! wp_verify_nonce( $_POST[ 'starter_plugin_' . wp_unslash( $this->post_type ) . '_noonce' ], plugin_basename( dirname( Starter_Plugin()->plugin_path ) ) ) ) {
 			return $post_id;
 		}
 
-		if ( isset( $_POST['post_type'] ) && 'page' === esc_attr( $_POST['post_type'] ) ) {
+		if ( isset( wp_unslash( $_POST['post_type'] ) ) && 'page' === esc_attr( wp_unslash( $_POST['post_type'] ) ) ) {
 			if ( ! current_user_can( 'edit_page', $post_id ) ) {
 				return $post_id;
 			}
@@ -296,8 +296,11 @@ class Starter_Plugin_Post_Type {
 		$fields     = array_keys( $field_data );
 
 		foreach ( $fields as $f ) {
+			if ( ! isset( $_POST[ $f ] ) ) {
+				continue;
+			}
 
-			${$f} = wp_strip_all_tags( trim( $_POST[ $f ] ) );
+			${$f} = wp_strip_all_tags( trim( wp_unslash( $_POST[ $f ] ) ) );
 
 			// Escape the URLs.
 			if ( 'url' === $field_data[ $f ]['type'] ) {
